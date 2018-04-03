@@ -10,6 +10,8 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "dotenv": "^5.0.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "mongoose": "^5.0.12",
@@ -17,6 +19,8 @@
     "pug": "2.0.0-beta11"
   },
   "devDependencies": {
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.10.0",
     "nodemon": "^1.17.2"
   }
 }
