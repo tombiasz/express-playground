@@ -41,4 +41,16 @@ AuthorSchema
     return moment(this.date_of_death).format('YYYY-MM-DD');
   });
 
+AuthorSchema
+  .virtual('lifespan')
+  .get(function () {
+    if (this.date_of_birth_formatted !== '' && this.date_of_death_formatted !== '') {
+      return this.date_of_birth_formatted + ' - ' + this.date_of_death_formatted;
+    }
+    if (this.date_of_birth_formatted !== '') {
+      return this.date_of_birth_formatted;
+    }
+    return '';
+  });
+
 module.exports = mongoose.model('Author', AuthorSchema);
