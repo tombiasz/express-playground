@@ -157,3 +157,117 @@ describe('Book routes', () => {
     });
   });
 });
+
+describe('Author routes', () => {
+  before((done) => {
+    this.author = new Author({
+      first_name: 'John',
+      family_name: 'Doe',
+      date_of_birth: null,
+      date_of_death: null,
+    });
+    this.author.save((err) => {
+      if (err) { throw new Error(err); }
+      done();
+    });
+  });
+
+  describe('Author index GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get('/catalog/authors')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author detail GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/author/${this.author.id}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author create GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get('/catalog/author/create')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author create POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post('/catalog/author/create')
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author update GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/author/${this.author.id}/update`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author update POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post(`/catalog/author/${this.author.id}/update`)
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author delete GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/author/${this.author.id}/delete`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Author delete POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post(`/catalog/author/${this.author.id}/delete`)
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+});
