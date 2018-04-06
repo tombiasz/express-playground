@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var dotenv = require('dotenv');
+var mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,9 +16,13 @@ dotenv.config();
 
 var app = express();
 
+var env = app.get('env');
+
 // database config
-var mongoose = require('mongoose');
-var mongoDB = process.env.MONGODB_URL;
+var mongoDB = env === 'test'
+  ? process.env.TEST_MONGODB_URL
+  : process.env.MONGODB_URL;
+
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
