@@ -271,3 +271,114 @@ describe('Author routes', () => {
     });
   });
 });
+
+describe('Genre routes', () => {
+  before((done) => {
+    this.genre = new Genre({
+      name: 'Genre',
+    });
+    this.genre.save((err) => {
+      if (err) { throw new Error(err); }
+      done();
+    });
+  });
+
+  describe('Genre list GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get('/catalog/genres')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre detail GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/genre/${this.genre.id}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre create GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get('/catalog/genre/create')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre create POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post('/catalog/genre/create')
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre update GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/genre/${this.genre.id}/update`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre update POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post(`/catalog/genre/${this.genre.id}/update`)
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre delete GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/genre/${this.book.id}/delete`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('Genre delete POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post(`/catalog/genre/${this.book.id}/delete`)
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+});
