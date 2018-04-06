@@ -8,7 +8,7 @@ block content
       label(for='book') Book:
       select#book.form-control(type='select' placeholder='Select book' name='book' required='true')
         for book in book_list
-          if bookinstance
+          if bookinstance && bookinstance.book
             option(value=book._id selected=(bookinstance.book.toString()==book._id.toString() ? 'selected' : false)) #{book.title}
           else
             option(value=book._id) #{book.title}
