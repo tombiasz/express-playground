@@ -5,6 +5,7 @@ const mocha = require('mocha');
 
 const Author = require('../../models/author');
 const Book = require('../../models/book');
+const BookInstance = require('../../models/bookinstance');
 const Genre = require('../../models/genre');
 
 
@@ -374,6 +375,147 @@ describe('Genre routes', () => {
       chai
         .request(app)
         .post(`/catalog/genre/${this.book.id}/delete`)
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+});
+
+describe('BookInstance routes', () => {
+  before((done) => {
+    const author = new Author({
+      first_name: 'John',
+      family_name: 'Doe',
+      date_of_birth: null,
+      date_of_death: null,
+    });
+    const genre = new Genre({
+      name: 'Genre',
+    });
+
+    Promise
+      .all([
+        author.save(),
+        genre.save(),
+      ])
+      .then((results) => {
+        const [theAuthor, theGenre] = results;
+
+        const book = new Book({
+          title: 'The Title',
+          author: theAuthor.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [theGenre.id],
+        });
+        book.save((err) => {
+          if (err) { throw new Error(err); }
+          this.bookinstance = new BookInstance({
+            book: book.id,
+            imprint: 'Imprint',
+          });
+          this.bookinstance.save((err) => {
+            if (err) { throw new Error(err); }
+            done();
+          });
+        });
+      });
+  });
+
+  describe('BookInstance list GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get('/catalog/bookinstances')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance detail GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/bookinstance/${this.bookinstance.id}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance create GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get('/catalog/bookinstance/create')
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance create POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post('/catalog/bookinstance/create')
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance update GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/bookinstance/${this.bookinstance.id}/update`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance update POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post(`/catalog/bookinstance/${this.bookinstance.id}/update`)
+        .send({})
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance delete GET route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .get(`/catalog/bookinstance/${this.bookinstance.id}/delete`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+
+  describe('BookInstance delete POST route', () => {
+    it('should responds with status 200', (done) => {
+      chai
+        .request(app)
+        .post(`/catalog/bookinstance/${this.bookinstance.id}/delete`)
         .send({})
         .end((err, res) => {
           expect(res).to.have.status(200);
