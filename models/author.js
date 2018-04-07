@@ -1,10 +1,10 @@
-var moment = require('moment');
-var mongoose = require('mongoose');
+const moment = require('moment');
+const mongoose = require('mongoose');
 
 
-var Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
-var AuthorSchema = new Schema({
+const AuthorSchema = new Schema({
   first_name: { type: String, required: true, max: 100 },
   family_name: { type: String, required: true, max: 100 },
   date_of_birth: { type: Date },
@@ -13,41 +13,44 @@ var AuthorSchema = new Schema({
 
 AuthorSchema
   .virtual('name')
-  .get(function () {
-    return this.family_name + ', ' + this.first_name;
+  .get(function getName() {
+    return `${this.family_name}, ${this.first_name}`;
   });
 
 AuthorSchema
   .virtual('url')
-  .get(function () {
-    return '/catalog/author/' + this._id;
+  .get(function getURL() {
+    return `/catalog/author/${this.id}`;
   });
 
 AuthorSchema
   .virtual('date_of_birth_formatted')
-  .get(function () {
-    if (!this.date_of_birth) {
+  .get(function getDateOfBirthFormatted() {
+    const { date_of_birth } = this;
+    if (!date_of_birth) {
       return '';
     }
-    return moment(this.date_of_birth).format('YYYY-MM-DD');
+    return moment(date_of_birth).format('YYYY-MM-DD');
   });
 
 AuthorSchema
   .virtual('date_of_death_formatted')
-  .get(function () {
-    if (!this.date_of_death) {
+  .get(function getDateOfDeathFormatted() {
+    const { date_of_death } = this;
+    if (!date_of_death) {
       return '';
     }
-    return moment(this.date_of_death).format('YYYY-MM-DD');
+    return moment(date_of_death).format('YYYY-MM-DD');
   });
 
 AuthorSchema
   .virtual('lifespan')
-  .get(function () {
-    if (this.date_of_birth_formatted !== '' && this.date_of_death_formatted !== '') {
-      return this.date_of_birth_formatted + ' - ' + this.date_of_death_formatted;
+  .get(function getLifespan() {
+    const { date_of_birth_formatted, date_of_death_formatted } = this;
+    if (date_of_birth_formatted !== '' && date_of_death_formatted !== '') {
+      return `${date_of_birth_formatted} - ${date_of_death_formatted}`;
     }
-    if (this.date_of_birth_formatted !== '') {
+    if (date_of_birth_formatted !== '') {
       return this.date_of_birth_formatted;
     }
     return '';
