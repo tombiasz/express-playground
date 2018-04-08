@@ -16,27 +16,24 @@ exports.genre_list = (req, res, next) =>
       res.render('genre_list', { title: 'Genre List', genre_list });
     });
 
-exports.genre_detail = function (req, res, next) {
-  async.parallel({
-    genre: function (callback) {
-      Genre.findById(req.params.id)
-        .exec(callback);
-    },
-    genre_books: function (callback) {
-      Book.find({ 'genre': req.params.id })
-      .exec(callback);
-    },
-  },
-  function (err, results) {
+exports.genre_detail = (req, res, next) => {
+  const queries = {
+    genre: cb => Genre.findById(req.params.id).exec(cb),
+    genre_books: cb => Book.find({ genre: req.params.id }).exec(cb),
+  };
+
+  async.parallel(queries, (err, results) => {
     if (err) { return next(err); }
 
-    if (results.genre == null) {
-      var err = new Error('Genre not found');
-      err.status = 404;
-      return next(err);
+    const { genre, genre_books } = results;
+
+    if (genre === null) {
+      const error = new Error('Genre not found');
+      error.status = 404;
+      return next(error);
     }
 
-    res.render('genre_detail', { title: 'Genre Detail', genre: results.genre, genre_books: results.genre_books });
+    res.render('genre_detail', { title: 'Genre Detail', genre, genre_books });
   });
 };
 
