@@ -37,9 +37,8 @@ exports.genre_detail = (req, res, next) => {
   });
 };
 
-exports.genre_create_get = function (req, res, next) {
+exports.genre_create_get = (req, res) =>
   res.render('genre_form', { title: 'Create Genre' });
-};
 
 exports.genre_create_post = [
     body('name', 'Genre name required').isLength({ min: 1 }).trim(),
