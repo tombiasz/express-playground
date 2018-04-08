@@ -2,6 +2,7 @@ const chai = require('chai');
 const mocha = require('mocha');
 
 const Genre = require('../../models/genre');
+const dbUtils = require('../../utils/db.js');
 
 
 const { expect } = chai;
@@ -9,13 +10,18 @@ const { describe, it, before } = mocha;
 
 describe('Genre model', () => {
   before((done) => {
-    this.genre = new Genre({
-      name: 'Genre',
-    });
-    this.genre.save((err) => {
-      if (err) { throw new Error(err); }
-      done();
-    });
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        this.genre = new Genre({
+          name: 'Genre',
+        });
+
+        this.genre.save((err) => {
+          if (err) { throw new Error(err); }
+          done();
+        });
+      });
   });
 
   describe('name', () => {

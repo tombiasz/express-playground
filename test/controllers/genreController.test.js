@@ -6,6 +6,7 @@ const Author = require('../../models/author');
 const Book = require('../../models/book');
 const Genre = require('../../models/genre');
 const genreController = require('../../controllers/genreController');
+const dbUtils = require('../../utils/db.js');
 
 
 const { expect } = chai;
@@ -14,46 +15,48 @@ const { describe, it, before } = mocha;
 
 describe('Genre controller', () => {
   before((done) => {
-    Author.collection.drop();
-    Book.collection.drop();
-    Genre.collection.drop();
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        const author = new Author({
+          first_name: 'John',
+          family_name: 'Doe',
+        });
+        this.genre1 = new Genre({
+          name: 'Fantasy',
+        });
+        this.genre2 = new Genre({
+          name: 'Sci-Fi',
+        });
+        this.genre3 = new Genre({
+          name: 'Poetry',
+        });
 
-    const author = new Author({
-      first_name: 'John',
-      family_name: 'Doe',
-    });
-    this.genre1 = new Genre({
-      name: 'Fantasy',
-    });
-    this.genre2 = new Genre({
-      name: 'Sci-Fi',
-    });
-    this.genre3 = new Genre({
-      name: 'Poetry',
-    });
+        Promise
+          .all([
+            author.save(),
+            this.genre1.save(),
+            this.genre2.save(),
+            this.genre3.save(),
+          ])
+          .then((results) => {
+            const [author, ...genres] = results;
+            const book = new Book({
+              title: 'The Title',
+              author: author.id,
+              summary: 'Summary',
+              isbn: '123456789',
+              genre: [this.genre1.id],
+            });
 
-    Promise.all([
-      author.save(),
-      this.genre1.save(),
-      this.genre2.save(),
-      this.genre3.save(),
-    ]).then((results) => {
-      const [author, ...genres] = results;
+            this.genres = genres;
+            book.save((err) => {
+              if (err) { throw new Error(err); }
 
-      this.genres = genres;
-      const book = new Book({
-        title: 'The Title',
-        author: author.id,
-        summary: 'Summary',
-        isbn: '123456789',
-        genre: [this.genre1.id,],
+              done();
+            });
+          });
       });
-      book.save((err) => {
-        if (err) { throw new Error(err); }
-
-        done();
-      });
-    });
   });
 
   describe('genre_list', () => {

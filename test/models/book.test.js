@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const Author = require('../../models/author');
 const Book = require('../../models/book');
+const dbUtils = require('../../utils/db.js');
 
 
 const { expect } = chai;
@@ -13,25 +14,31 @@ const { Schema } = mongoose;
 
 describe('Book model', () => {
   before((done) => {
-    const author = new Author({
-      first_name: 'John',
-      family_name: 'Doe',
-    });
-    author.save((err) => {
-      if (err) { throw new Error(err); }
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        const author = new Author({
+          first_name: 'John',
+          family_name: 'Doe',
+        });
 
-      this.book = new Book({
-        title: 'The Title',
-        author: author.id,
-        summary: 'Summary',
-        isbn: '123456789',
-        genre: [],
+        author.save((err) => {
+          if (err) { throw new Error(err); }
+
+          this.book = new Book({
+            title: 'The Title',
+            author: author.id,
+            summary: 'Summary',
+            isbn: '123456789',
+            genre: [],
+          });
+
+          this.book.save((err) => {
+            if (err) { throw new Error(err); }
+            done();
+          });
+        });
       });
-      this.book.save((err) => {
-        if (err) { throw new Error(err); }
-        done();
-      });
-    });
   });
 
   describe('title', () => {

@@ -7,6 +7,7 @@ const Author = require('../../models/author');
 const Book = require('../../models/book');
 const BookInstance = require('../../models/bookinstance');
 const Genre = require('../../models/genre');
+const dbUtils = require('../../utils/db.js');
 
 
 const { expect } = chai;
@@ -15,35 +16,40 @@ chai.use(chaiHttp);
 
 describe('Book routes', () => {
   before((done) => {
-    const author = new Author({
-      first_name: 'John',
-      family_name: 'Doe',
-      date_of_birth: null,
-      date_of_death: null,
-    });
-    const genre = new Genre({
-      name: 'Genre',
-    });
-
-    Promise
-      .all([
-        author.save(),
-        genre.save(),
-      ])
-      .then((results) => {
-        const [theAuthor, theGenre] = results;
-
-        this.book = new Book({
-          title: 'The Title',
-          author: theAuthor.id,
-          summary: 'Summary',
-          isbn: '123456789',
-          genre: [theGenre.id],
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        const author = new Author({
+          first_name: 'John',
+          family_name: 'Doe',
+          date_of_birth: null,
+          date_of_death: null,
         });
-        this.book.save((err) => {
-          if (err) { throw new Error(err); }
-          done();
+        const genre = new Genre({
+          name: 'Genre',
         });
+
+        Promise
+          .all([
+            author.save(),
+            genre.save(),
+          ])
+          .then((results) => {
+            const [theAuthor, theGenre] = results;
+
+            this.book = new Book({
+              title: 'The Title',
+              author: theAuthor.id,
+              summary: 'Summary',
+              isbn: '123456789',
+              genre: [theGenre.id],
+            });
+
+            this.book.save((err) => {
+              if (err) { throw new Error(err); }
+              done();
+            });
+          });
       });
   });
 
@@ -161,16 +167,20 @@ describe('Book routes', () => {
 
 describe('Author routes', () => {
   before((done) => {
-    this.author = new Author({
-      first_name: 'John',
-      family_name: 'Doe',
-      date_of_birth: null,
-      date_of_death: null,
-    });
-    this.author.save((err) => {
-      if (err) { throw new Error(err); }
-      done();
-    });
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        this.author = new Author({
+          first_name: 'John',
+          family_name: 'Doe',
+          date_of_birth: null,
+          date_of_death: null,
+        });
+        this.author.save((err) => {
+          if (err) { throw new Error(err); }
+          done();
+        });
+      });
   });
 
   describe('Author index GET route', () => {
@@ -275,13 +285,17 @@ describe('Author routes', () => {
 
 describe('Genre routes', () => {
   before((done) => {
-    this.genre = new Genre({
-      name: 'Genre',
-    });
-    this.genre.save((err) => {
-      if (err) { throw new Error(err); }
-      done();
-    });
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        this.genre = new Genre({
+          name: 'Genre',
+        });
+        this.genre.save((err) => {
+          if (err) { throw new Error(err); }
+          done();
+        });
+      });
   });
 
   describe('Genre list GET route', () => {
@@ -386,42 +400,48 @@ describe('Genre routes', () => {
 
 describe('BookInstance routes', () => {
   before((done) => {
-    const author = new Author({
-      first_name: 'John',
-      family_name: 'Doe',
-      date_of_birth: null,
-      date_of_death: null,
-    });
-    const genre = new Genre({
-      name: 'Genre',
-    });
-
-    Promise
-      .all([
-        author.save(),
-        genre.save(),
-      ])
-      .then((results) => {
-        const [theAuthor, theGenre] = results;
-
-        const book = new Book({
-          title: 'The Title',
-          author: theAuthor.id,
-          summary: 'Summary',
-          isbn: '123456789',
-          genre: [theGenre.id],
+    dbUtils
+      .dropAllCollections()
+      .then(() => {
+        const author = new Author({
+          first_name: 'John',
+          family_name: 'Doe',
+          date_of_birth: null,
+          date_of_death: null,
         });
-        book.save((err) => {
-          if (err) { throw new Error(err); }
-          this.bookinstance = new BookInstance({
-            book: book.id,
-            imprint: 'Imprint',
-          });
-          this.bookinstance.save((err) => {
-            if (err) { throw new Error(err); }
-            done();
-          });
+        const genre = new Genre({
+          name: 'Genre',
         });
+
+        Promise
+          .all([
+            author.save(),
+            genre.save(),
+          ])
+          .then((results) => {
+            const [theAuthor, theGenre] = results;
+            const book = new Book({
+              title: 'The Title',
+              author: theAuthor.id,
+              summary: 'Summary',
+              isbn: '123456789',
+              genre: [theGenre.id],
+            });
+
+            book.save((err) => {
+              if (err) { throw new Error(err); }
+
+              this.bookinstance = new BookInstance({
+                book: book.id,
+                imprint: 'Imprint',
+              });
+
+              this.bookinstance.save((err) => {
+                if (err) { throw new Error(err); }
+                done();
+              });
+            });
+          });
       });
   });
 
