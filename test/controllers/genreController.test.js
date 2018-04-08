@@ -184,4 +184,22 @@ describe('Genre controller', () => {
         });
     });
   });
+
+  describe('genre_create_get', () => {
+    it('should use proper template', (done) => {
+      testController(genreController.genre_create_get)
+        .get({}, (type, view) => {
+          expect(view).to.equal('genre_form');
+          done();
+        });
+    });
+
+    it('should set template variable title', (done) => {
+      testController(genreController.genre_create_get)
+        .get({}, (type, view, { title }) => {
+          expect(title).to.equal('Create Genre');
+          done();
+        });
+    });
+  });
 });
