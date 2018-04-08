@@ -1,20 +1,20 @@
-var async = require('async');
+const async = require('async');
 const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
-var Book = require('../models/book');
-var Genre = require('../models/genre');
+const Book = require('../models/book');
+const Genre = require('../models/genre');
 
 
-exports.genre_list = function (req, res, next) {
-  Genre.find()
+exports.genre_list = (req, res, next) =>
+  Genre
+    .find()
     .sort([['name', 'ascending']])
-    .exec(function (err, genre_list) {
+    .exec((err, genre_list) => {
       if (err) { return next(err); }
 
-      res.render('genre_list', { title: 'Genre List', genre_list: genre_list });
+      res.render('genre_list', { title: 'Genre List', genre_list });
     });
-};
 
 exports.genre_detail = function (req, res, next) {
   async.parallel({
