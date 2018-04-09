@@ -37,33 +37,32 @@ exports.genre_create_get = (req, res) =>
   res.render('genre_form', { title: 'Create Genre' });
 
 exports.genre_create_post = [
-    body('name', 'Genre name required').isLength({ min: 1 }).trim(),
-    sanitizeBody('name').trim().escape(),
-    (req, res, next) => {
-      const errors = validationResult(req);
+  body('name', 'Genre name required').isLength({ min: 1 }).trim(),
+  sanitizeBody('name').trim().escape(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    const { name } = req.body;
+    const genre = new Genre({ name });
 
-      var genre = new Genre(
-        { name: req.body.name }
-      );
-
-      if (!errors.isEmpty()) {
-        res.render('genre_form', { title: 'Create Genre', genre: genre, errors: errors.array()});
-      } else {
-        Genre.findOne({ 'name': req.body.name })
-          .exec(function (err, found_genre) {
-                if (err) { return next(err); }
-
-                if (found_genre) {
-                  res.redirect(found_genre.url);
-                } else {
-                  genre.save(function (err) {
-                    if (err) { return next(err); }
-                    res.redirect(genre.url);
-                  });
-                }
-            });
-      }
+    if (!errors.isEmpty()) {
+      res.render('genre_form', { title: 'Create Genre', genre, errors: errors.array() });
     }
+
+    Genre
+      .findOne({ name })
+      .exec()
+      .then((found_genre) => {
+        if (found_genre) {
+          res.redirect(found_genre.url);
+        } else {
+          genre
+            .save()
+            .then(genre => res.redirect(genre.url))
+            .catch(next);
+        }
+      })
+      .catch(next);
+  },
 ];
 
 exports.genre_delete_get = function (req, res, next) {
