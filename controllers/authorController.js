@@ -28,7 +28,7 @@ exports.author_list = (req, res, next) => {
     .sort([['family_name', 'ascending']])
     .exec()
     .then((author_list) => {
-      res.render('author_list', { title: 'Author List', author_list});
+      res.render('author_list', { title: 'Author List', author_list });
     })
     .catch(next);
 };
@@ -92,7 +92,7 @@ exports.author_create_post = [
       first_name,
       family_name,
       date_of_birth,
-      date_of_death
+      date_of_death,
     } = req.body;
     const author = new Author({
       first_name,
@@ -197,7 +197,7 @@ exports.author_update_post = [
       first_name,
       family_name,
       date_of_birth,
-      date_of_death
+      date_of_death,
     } = req.body;
     const author = new Author({
       _id: id,
