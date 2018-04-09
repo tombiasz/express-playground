@@ -1,4 +1,5 @@
 const { body, validationResult } = require('express-validator/check');
+const createError = require('http-errors');
 const { sanitizeBody } = require('express-validator/filter');
 
 const Author = require('../models/author');
@@ -11,14 +12,14 @@ exports.getAuthorById = (req, res, next) => {
     .findById(id)
     .exec()
     .then((author) => {
-      req.author = author;
-      next();
+      if (!author) {
+        next(createError(404, 'Author not found'));
+      } else {
+        req.author = author;
+        next();
+      }
     })
-    .catch(() => {
-      const error = new Error('Author not found');
-      error.status = 404;
-      return next(error);
-    });
+    .catch(next);
 };
 
 exports.author_list = (req, res, next) => {
