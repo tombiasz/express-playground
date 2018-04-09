@@ -17,15 +17,11 @@ exports.genre_list = (req, res, next) =>
     });
 
 exports.genre_detail = (req, res, next) => {
-  const queries = {
-    genre: cb => Genre.findById(req.params.id).exec(cb),
-    genre_books: cb => Book.find({ genre: req.params.id }).exec(cb),
-  };
-
-  async.parallel(queries, (err, results) => {
-    if (err) { return next(err); }
-
-    const { genre, genre_books } = results;
+  Promise.all([
+    Genre.findById(req.params.id).exec(),
+    Book.find({ genre: req.params.id }).exec(),
+  ]).then((results) => {
+    const [genre, genre_books] = results;
 
     if (genre === null) {
       const error = new Error('Genre not found');
@@ -34,7 +30,7 @@ exports.genre_detail = (req, res, next) => {
     }
 
     res.render('genre_detail', { title: 'Genre Detail', genre, genre_books });
-  });
+  }).catch(next);
 };
 
 exports.genre_create_get = (req, res) =>
