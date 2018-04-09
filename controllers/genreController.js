@@ -68,10 +68,12 @@ exports.genre_create_post = [
 ];
 
 exports.genre_delete_get = (req, res, next) => {
+  const { id } = req.params;
+
   Promise
     .all([
-      Genre.findById(req.params.id).exec(),
-      Book.find({ genre: req.params.id }).exec(),
+      Genre.findById(id).exec(),
+      Book.find({ genre: id }).exec(),
     ])
     .then((results) => {
       const [genre, genre_books] = results;
