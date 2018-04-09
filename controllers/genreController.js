@@ -38,8 +38,14 @@ exports.genre_create_get = (req, res) =>
   res.render('genre_form', { title: 'Create Genre' });
 
 exports.genre_create_post = [
-  body('name', 'Genre name required').isLength({ min: 1 }).trim(),
-  sanitizeBody('name').trim().escape(),
+  body('name', 'Genre name required')
+    .isLength({ min: 1 })
+    .trim(),
+
+  sanitizeBody('name')
+    .trim()
+    .escape(),
+
   (req, res, next) => {
     const errors = validationResult(req);
     const { name } = req.body;
@@ -127,8 +133,14 @@ exports.genre_update_get = (req, res, next) => {
 };
 
 exports.genre_update_post = [
-  body('name', 'Genre name required').isLength({ min: 1 }).trim(),
-  sanitizeBody('name').trim().escape(),
+  body('name', 'Genre name required')
+    .isLength({ min: 1 })
+    .trim(),
+
+  sanitizeBody('name')
+    .trim()
+    .escape(),
+
   (req, res, next) => {
     const errors = validationResult(req);
     const { id, name } = req.params;
