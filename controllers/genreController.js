@@ -67,23 +67,22 @@ exports.genre_create_post = [
   },
 ];
 
-exports.genre_delete_get = function (req, res, next) {
-  async.parallel({
-    genre: function (callback) {
-      Genre.findById(req.params.id).exec(callback)
-    },
-    genre_books: function (callback) {
-      Book.find({ 'genre': req.params.id }).exec(callback)
-    },
-  }, function (err, results) {
-    if (err) { return next(err); }
+exports.genre_delete_get = (req, res, next) => {
+  Promise
+    .all([
+      Genre.findById(req.params.id).exec(),
+      Book.find({ genre: req.params.id }).exec(),
+    ])
+    .then((results) => {
+      const [genre, genre_books] = results;
 
-    if (results.genre === null) {
-      res.redirect('/catalog/genres');
-    }
-
-    res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_books: results.genre_books });
-  });
+      if (genre === null) {
+        res.redirect('/catalog/genres');
+      } else {
+        res.render('genre_delete', { title: 'Delete Genre', genre, genre_books });
+      }
+    })
+    .catch(next);
 };
 
 exports.genre_delete_post = function (req, res) {
