@@ -10,11 +10,11 @@ exports.genre_list = (req, res, next) =>
   Genre
     .find()
     .sort([['name', 'ascending']])
-    .exec((err, genre_list) => {
-      if (err) { return next(err); }
-
+    .exec()
+    .then((genre_list) => {
       res.render('genre_list', { title: 'Genre List', genre_list });
-    });
+    })
+    .catch(next);
 
 exports.genre_detail = (req, res, next) => {
   Promise.all([
