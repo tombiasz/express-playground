@@ -1,158 +1,234 @@
-var async = require('async');
-const { body,validationResult } = require('express-validator/check');
+const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
-var Book = require('../models/book');
-var BookInstance = require('../models/bookinstance');
+const Book = require('../models/book');
+const BookInstance = require('../models/bookinstance');
 
 
-exports.bookinstance_list = function (req, res, next) {
+exports.bookinstance_list = (req, res, next) => {
   BookInstance.find()
-  .populate('book')
-  .exec(function (err, bookinstance_list) {
-    if (err) { return next(err); }
-
-    res.render('bookinstance_list', { title: 'Book Instance List', bookinstance_list: bookinstance_list });
-  });
+    .populate('book')
+    .exec()
+    .then((bookinstance_list) => {
+      res.render('bookinstance_list', {
+        title: 'Book Instance List',
+        bookinstance_list,
+      });
+    })
+    .catch(next);
 };
 
-exports.bookinstance_detail = function (req, res, next) {
-  BookInstance.findById(req.params.id)
+exports.bookinstance_detail = (req, res, next) => {
+  const { id } = req.params;
+  BookInstance
+    .findById(id)
     .populate('book')
-    .exec(function (err, bookinstance) {
-      if (err) { return next(err); }
-
-      if (bookinstance == null) {
-        var err = new Error('Book copy not found');
+    .exec()
+    .then((bookinstance) => {
+      if (bookinstance === null) {
+        const err = new Error('Book copy not found');
         err.status = 404;
         return next(err);
       }
 
-      res.render('bookinstance_detail', { title: 'Book:', bookinstance:  bookinstance});
-    });
+      res.render('bookinstance_detail', { title: 'Book:', bookinstance });
+    })
+    .catch(next);
 };
 
-exports.bookinstance_create_get = function (req, res, next) {
-  Book.find({}, 'title')
-  .exec(function (err, books) {
-    if (err) { return next(err); }
-
-    res.render('bookinstance_form', {title: 'Create BookInstance', book_list:books});
-  });
+exports.bookinstance_create_get = (req, res, next) => {
+  Book
+    .find({}, 'title')
+    .exec()
+    .then((book_list) => {
+      res.render('bookinstance_form', {
+        title: 'Create BookInstance',
+        book_list,
+      });
+    })
+    .catch(next);
 };
 
 exports.bookinstance_create_post = [
-  body('book', 'Book must be specified').isLength({ min: 1 }).trim(),
-  body('imprint', 'Imprint must be specified').isLength({ min: 1 }).trim(),
-  body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
+  body('book', 'Book must be specified')
+    .isLength({ min: 1 })
+    .trim(),
 
-  sanitizeBody('book').trim().escape(),
-  sanitizeBody('imprint').trim().escape(),
-  sanitizeBody('status').trim().escape(),
-  sanitizeBody('due_back').toDate(),
+  body('imprint', 'Imprint must be specified')
+    .isLength({ min: 1 })
+    .trim(),
+
+  body('due_back', 'Invalid date')
+    .optional({ checkFalsy: true })
+    .isISO8601(),
+
+  sanitizeBody('book')
+    .trim()
+    .escape(),
+
+  sanitizeBody('imprint')
+    .trim()
+    .escape(),
+
+  sanitizeBody('status')
+    .trim()
+    .escape(),
+
+  sanitizeBody('due_back')
+    .toDate(),
 
   (req, res, next) => {
     const errors = validationResult(req);
-
-    var bookinstance = new BookInstance({
-      book: req.body.book,
-      imprint: req.body.imprint,
-      status: req.body.status,
-      due_back: req.body.due_back
+    const {
+      book,
+      imprint,
+      status,
+      due_back,
+    } = req.body;
+    const bookinstance = new BookInstance({
+      book,
+      imprint,
+      status,
+      due_back,
     });
 
     if (!errors.isEmpty()) {
-      Book.find({}, 'title')
-      .exec(function (err, books) {
-        if (err) { return next(err); }
-
-        res.render('bookinstance_form', { title: 'Create BookInstance', book_list : books, errors: errors.array(), bookinstance:bookinstance });
-      });
-      return;
+      Book
+        .find({}, 'title')
+        .exec()
+        .then((book_list) => {
+          res.render('bookinstance_form', {
+            title: 'Create BookInstance',
+            book_list,
+            bookinstance,
+            errors: errors.array(),
+          });
+        })
+        .catch(next);
     } else {
-      bookinstance.save(function (err) {
-        if (err) { return next(err); }
-
-        res.redirect(bookinstance.url);
-      });
+      bookinstance
+        .save()
+        .then(() => res.redirect(bookinstance.url))
+        .catch(next);
     }
-  }
+  },
 ];
 
-exports.bookinstance_delete_get = function (req, res, next) {
-  BookInstance.findById(req.params.id)
-    .exec(function (err, bookinstance) {
-      if (err) { return next(err); }
+exports.bookinstance_delete_get = (req, res, next) => {
+  const { id } = req.params;
 
-      res.render('bookinstance_delete', { title: 'Delete BookInstance', bookinstance: bookinstance} );
-  });
+  BookInstance
+    .findById(id)
+    .exec()
+    .then((bookinstance) => {
+      res.render('bookinstance_delete', {
+        title: 'Delete BookInstance',
+        bookinstance,
+      });
+    })
+    .catch(next);
 };
 
-exports.bookinstance_delete_post = function (req, res) {
-  BookInstance.findByIdAndRemove(req.body.bookinstanceid, function deleteBookInstance(err) {
-    if (err) { return next(err); }
+exports.bookinstance_delete_post = (req, res, next) => {
+  const { id } = req.params;
 
-    res.redirect('/catalog/bookinstances');
-  });
+  BookInstance
+    .findByIdAndRemove(id)
+    .exec()
+    .then(() => res.redirect('/catalog/bookinstances'))
+    .catch(next);
 };
 
-// Display BookInstance update form on GET.
-exports.bookinstance_update_get = function (req, res, next) {
-  async.parallel({
-    bookinstance: function (callback) {
-      BookInstance.findById(req.params.id).exec(callback);
-    },
-    books: function (callback) {
-      Book.find(callback);
-    },
-  },
-  function (err, results) {
-    if (err) { return next(err); }
+exports.bookinstance_update_get = (req, res, next) => {
+  const { id } = req.params;
 
-    if (results.bookinstance === null) {
-      var err = new Error('BookInstance not found');
-      err.status = 404;
-      return next(err);
-    }
+  Promise
+    .all([
+      BookInstance.findById(id).exec(),
+      Book.find().exec(),
+    ])
+    .then((results) => {
+      const [bookinstance, book_list] = results;
 
-    res.render('bookinstance_form', { title: 'Update BookInstance', bookinstance: results.bookinstance, book_list: results.books });
-  });
+      if (bookinstance === null) {
+        const err = new Error('BookInstance not found');
+        err.status = 404;
+        return next(err);
+      }
+
+      res.render('bookinstance_form', {
+        title: 'Update BookInstance',
+        bookinstance,
+        book_list,
+      });
+    })
+    .catch(next);
 };
 
 exports.bookinstance_update_post = [
-  body('book', 'Book must be specified').isLength({ min: 1 }).trim(),
-  body('imprint', 'Imprint must be specified').isLength({ min: 1 }).trim(),
-  body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
+  body('book', 'Book must be specified')
+    .isLength({ min: 1 })
+    .trim(),
 
-  sanitizeBody('book').trim().escape(),
-  sanitizeBody('imprint').trim().escape(),
-  sanitizeBody('status').trim().escape(),
-  sanitizeBody('due_back').toDate(),
+  body('imprint', 'Imprint must be specified')
+    .isLength({ min: 1 })
+    .trim(),
+
+  body('due_back', 'Invalid date')
+    .optional({ checkFalsy: true })
+    .isISO8601(),
+
+  sanitizeBody('book')
+    .trim()
+    .escape(),
+
+  sanitizeBody('imprint')
+    .trim()
+    .escape(),
+
+  sanitizeBody('status')
+    .trim()
+    .escape(),
+
+  sanitizeBody('due_back')
+    .toDate(),
 
   (req, res, next) => {
     const errors = validationResult(req);
+    const { id } = req.params;
+    const {
+      book,
+      imprint,
+      status,
+      due_back,
+    } = req.body;
+    const bookinstance = new BookInstance({
+      _id: id,
+      book,
+      imprint,
+      status,
+      due_back,
+    });
 
     if (!errors.isEmpty()) {
-      Book.find({}, 'title')
-      .exec(function (err, books) {
-        if (err) { return next(err); }
-
-        res.render('bookinstance_form', { title: 'Update BookInstance', book_list: books, errors: errors.array(), bookinstance: bookinstance });
-      });
-      return;
+      Book
+        .find({}, 'title')
+        .exec()
+        .then((book_list) => {
+          res.render('bookinstance_form', {
+            title: 'Update BookInstance',
+            book_list,
+            bookinstance,
+            errors: errors.array(),
+          });
+        })
+        .catch(next);
     } else {
-      var bookinstance = new BookInstance({
-        _id: req.params.id,
-        book: req.body.book,
-        imprint: req.body.imprint,
-        status: req.body.status,
-        due_back: req.body.due_back
-      });
-      BookInstance.findByIdAndUpdate(req.params.id, bookinstance, {}, function (err, bookinstance) {
-        if (err) { return next(err); }
-
-        res.redirect(bookinstance.url);
-      });
+      BookInstance
+        .findByIdAndUpdate(id, bookinstance)
+        .exec()
+        .then(() => res.redirect(bookinstance.url))
+        .catch(next);
     }
-  }
+  },
 ];
