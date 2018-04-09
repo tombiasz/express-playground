@@ -17,20 +17,22 @@ exports.genre_list = (req, res, next) =>
     .catch(next);
 
 exports.genre_detail = (req, res, next) => {
-  Promise.all([
-    Genre.findById(req.params.id).exec(),
-    Book.find({ genre: req.params.id }).exec(),
-  ]).then((results) => {
-    const [genre, genre_books] = results;
+  Promise
+    .all([
+      Genre.findById(req.params.id).exec(),
+      Book.find({ genre: req.params.id }).exec(),
+    ])
+    .then((results) => {
+      const [genre, genre_books] = results;
 
-    if (genre === null) {
-      const error = new Error('Genre not found');
-      error.status = 404;
-      return next(error);
-    }
+      if (genre === null) {
+        const error = new Error('Genre not found');
+        error.status = 404;
+        return next(error);
+      }
 
-    res.render('genre_detail', { title: 'Genre Detail', genre, genre_books });
-  }).catch(next);
+      res.render('genre_detail', { title: 'Genre Detail', genre, genre_books });
+    }).catch(next);
 };
 
 exports.genre_create_get = (req, res) =>
