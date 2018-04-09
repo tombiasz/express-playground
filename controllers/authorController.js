@@ -5,6 +5,22 @@ const Author = require('../models/author');
 const Book = require('../models/book');
 
 
+exports.getAuthorById = (req, res, next) => {
+  const { id } = req.params;
+  Author
+    .findById(id)
+    .exec()
+    .then((author) => {
+      req.author = author;
+      next();
+    })
+    .catch(() => {
+      const error = new Error('Author not found');
+      error.status = 404;
+      return next(error);
+    });
+};
+
 exports.author_list = (req, res, next) => {
   Author
     .find()
@@ -18,21 +34,12 @@ exports.author_list = (req, res, next) => {
 
 exports.author_detail = (req, res, next) => {
   const { id } = req.params;
+  const { author } = req;
 
-  Promise
-    .all([
-      Author.findById(id).exec(),
-      Book.find({ author: id }, 'title summary').exec(),
-    ])
-    .then((results) => {
-      const [author, author_books] = results;
-
-      if (author === null) {
-        const err = new Error('Author not found');
-        err.status = 404;
-        return next(err);
-      }
-
+  Book
+    .find({ author: id }, 'title summary')
+    .exec()
+    .then((author_books) => {
       res.render('author_detail', { title: 'Author Detail', author, author_books });
     })
     .catch(next);
@@ -106,19 +113,12 @@ exports.author_create_post = [
 
 exports.author_delete_get = (req, res, next) => {
   const { id } = req.params;
+  const { author } = req;
 
-  Promise
-    .all([
-      Author.findById(id).exec(),
-      Book.find({ author: id }).exec(),
-    ])
-    .then((results) => {
-      const [author, author_books] = results;
-
-      if (author === null) {
-        res.redirect('/catalog/authors');
-      }
-
+  Book
+    .find({ author: id })
+    .exec()
+    .then((author_books) => {
       res.render('author_delete', { title: 'Delete Author', author, author_books });
     })
     .catch(next);
@@ -126,15 +126,12 @@ exports.author_delete_get = (req, res, next) => {
 
 exports.author_delete_post = (req, res, next) => {
   const { id } = req.params;
+  const { author } = req;
 
-  Promise
-    .all([
-      Author.findById(id).exec(),
-      Book.find({ author: id }).exec(),
-    ])
-    .then((results) => {
-      const [author, author_books] = results;
-
+  Book
+    .find({ author: id })
+    .exec()
+    .then((author_books) => {
       if (author_books.length > 0) {
         res.render('author_delete', { title: 'Delete Author', author, author_books });
       } else {
@@ -142,7 +139,7 @@ exports.author_delete_post = (req, res, next) => {
           .findByIdAndRemove(id)
           .exec()
           .then(() => {
-            res.redirect('/catalog/authors')
+            res.redirect('/catalog/authors');
           })
           .catch(next);
       }
@@ -150,22 +147,9 @@ exports.author_delete_post = (req, res, next) => {
     .catch(next);
 };
 
-exports.author_update_get = (req, res, next) => {
-  const { id } = req.params;
-
-  Author
-    .findById(id)
-    .exec()
-    .then((author) => {
-      if (author === null) {
-        const err = new Error('Author not found');
-        err.status = 404;
-        return next(err);
-      }
-
-      res.render('author_form', { title: 'Update Author', author });
-    })
-    .catch(next);
+exports.author_update_get = (req, res) => {
+  const { author } = req;
+  res.render('author_form', { title: 'Update Author', author });
 };
 
 exports.author_update_post = [
