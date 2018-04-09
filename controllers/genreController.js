@@ -16,10 +16,12 @@ exports.genre_list = (req, res, next) =>
     .catch(next);
 
 exports.genre_detail = (req, res, next) => {
+  const { id } = req.params;
+
   Promise
     .all([
-      Genre.findById(req.params.id).exec(),
-      Book.find({ genre: req.params.id }).exec(),
+      Genre.findById(id).exec(),
+      Book.find({ genre: id }).exec(),
     ])
     .then((results) => {
       const [genre, genre_books] = results;
@@ -93,7 +95,7 @@ exports.genre_delete_get = (req, res, next) => {
 };
 
 exports.genre_delete_post = (req, res, next) => {
-  const id = req.body.genreid;
+  const { id } = req.params;
 
   Promise
     .all([
@@ -117,8 +119,9 @@ exports.genre_delete_post = (req, res, next) => {
 };
 
 exports.genre_update_get = (req, res, next) => {
+  const { id } = req.params;
   Genre
-    .findById(req.params.id)
+    .findById(id)
     .exec()
     .then((genre) => {
       if (genre === null) {
