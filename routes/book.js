@@ -6,12 +6,22 @@ const bookController = require('../controllers/bookController');
 const router = express.Router();
 
 router.get('/', bookController.index);
-router.get('/create', bookController.book_create_get);
-router.post('/create', bookController.book_create_post);
-router.get('/:id/delete', bookController.book_delete_get);
-router.post('/:id/delete', bookController.book_delete_post);
-router.get('/:id/update', bookController.book_update_get);
-router.post('/:id/update', bookController.book_update_post);
+
+router
+  .route('/create')
+  .get(bookController.book_create_get)
+  .post(bookController.book_create_post);
+
 router.get('/:id', bookController.book_detail);
+
+router
+  .route('/:id/delete')
+  .get(bookController.book_delete_get)
+  .post(bookController.book_delete_post);
+
+router
+  .route('/:id/update')
+  .get(bookController.book_update_get)
+  .post(bookController.book_update_post);
 
 module.exports = router;
