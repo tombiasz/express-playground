@@ -111,18 +111,20 @@ exports.genre_delete_post = (req, res, next) => {
     .catch(next);
 };
 
-exports.genre_update_get = function (req, res, next) {
-  Genre.findById(req.params.id).exec(function (err, genre) {
-    if (err) { return next(err); }
+exports.genre_update_get = (req, res, next) => {
+  Genre
+    .findById(req.params.id)
+    .exec()
+    .then((genre) => {
+      if (genre === null) {
+        const err = new Error('Genre not found');
+        err.status = 404;
+        return next(err);
+      }
 
-    if (genre === null) {
-      var err = new Error('Genre not found');
-      err.status = 404;
-      return next(err);
-    }
-
-    res.render('genre_form', { title: 'Update Genre', genre: genre });
-  });
+      res.render('genre_form', { title: 'Update Genre', genre: genre });
+    })
+    .catch(next);
 };
 
 exports.genre_update_post = [
