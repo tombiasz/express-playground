@@ -1,4 +1,3 @@
-const async = require('async');
 const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
@@ -59,7 +58,7 @@ exports.genre_create_post = [
         } else {
           genre
             .save()
-            .then(genre => res.redirect(genre.url))
+            .then(saved_genre => res.redirect(saved_genre.url))
             .catch(next);
         }
       })
@@ -122,32 +121,27 @@ exports.genre_update_get = (req, res, next) => {
         return next(err);
       }
 
-      res.render('genre_form', { title: 'Update Genre', genre: genre });
+      res.render('genre_form', { title: 'Update Genre', genre });
     })
     .catch(next);
 };
 
 exports.genre_update_post = [
   body('name', 'Genre name required').isLength({ min: 1 }).trim(),
-
   sanitizeBody('name').trim().escape(),
-
   (req, res, next) => {
     const errors = validationResult(req);
+    const { id, name } = req.params;
+    const genre = new Genre({ _id: id, name });
 
     if (!errors.isEmpty()) {
-      res.render('genre_form', { title: 'Create Genre', genre: genre, errors: errors.array()});
+      res.render('genre_form', { title: 'Create Genre', genre, errors: errors.array() });
     } else {
-      var genre = new Genre({
-        _id: req.params.id,
-        name: req.body.name
-      });
-
-      Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err, genre) {
-        if (err) { return next(err); }
-
-        res.redirect(genre.url);
-      });
+      Genre
+        .findByIdAndUpdate(id, genre, {})
+        .exec()
+        .then(updated_genre => res.redirect(updated_genre.url))
+        .catch(next);
     }
-  }
+  },
 ];
