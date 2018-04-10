@@ -184,20 +184,17 @@ exports.processBookCreateForm = (req, res, next) => {
 };
 
 exports.renderBookDeleteForm = (req, res, next) => {
-  const { id } = req.params;
+  const { book } = res;
 
-  Promise
-    .all([
-      Book.findById(id).exec(),
-      BookInstance.find({ book: id }).exec(),
-    ])
-    .then((results) => {
-      const [book, book_instances] = results;
-
-      if (results.book === null) {
-        res.redirect('/catalog/books');
-      }
-      res.render('book_delete', { title: 'Delete Book', book, book_instances });
+  BookInstance
+    .find({ book: book.id })
+    .exec()
+    .then((bookInstance) => {
+      res.render('book_delete', {
+        title: 'Delete Book',
+        book,
+        book_instances: bookInstance,
+      });
     })
     .catch(next);
 };
