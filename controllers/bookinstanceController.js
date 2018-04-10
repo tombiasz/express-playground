@@ -36,7 +36,7 @@ exports.renderBookInstanceDetail = (req, res, next) => {
     .catch(next);
 };
 
-exports.bookinstance_create_get = (req, res, next) => {
+exports.renderBookInstanceCreateForm = (req, res, next) => {
   Book
     .find({}, 'title')
     .exec()

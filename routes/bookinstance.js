@@ -3,6 +3,7 @@ const express = require('express');
 const bookinstanceController = require('../controllers/bookinstanceController');
 const {
   renderBookInstanceDetail,
+  renderBookInstanceCreateForm,
 } = require('../controllers/bookinstanceController');
 
 
@@ -10,7 +11,7 @@ const router = express.Router();
 
 router
   .route('/create')
-  .get(bookinstanceController.bookinstance_create_get)
+  .get(renderBookInstanceCreateForm)
   .post(bookinstanceController.bookinstance_create_post);
 
 router.get('/:id', renderBookInstanceDetail);
