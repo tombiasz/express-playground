@@ -63,7 +63,7 @@ exports.renderAuthorDetail = (req, res) => {
   });
 };
 
-exports.author_create_get = (req, res) => {
+exports.renderAuthorCreateGet = (req, res) => {
   res.render('author_form', { title: 'Create Author' });
 };
 
