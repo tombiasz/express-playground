@@ -85,7 +85,7 @@ exports.renderBookDetail = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_create_get = (req, res, next) => {
+exports.renderBookCreateForm = (req, res, next) => {
   Promise
     .all([
       Author.find().exec(),
