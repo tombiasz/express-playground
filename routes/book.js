@@ -6,6 +6,10 @@ const {
 
   renderBookCreateForm,
   renderBookDetail,
+
+  processBookCreateForm,
+
+  validateBookForm,
 } = require('../controllers/bookController');
 
 
@@ -18,7 +22,7 @@ router.param('id', getBookById);
 router
   .route('/create')
   .get(renderBookCreateForm)
-  .post(bookController.book_create_post);
+  .post(validateBookForm, processBookCreateForm);
 
 router.get('/:id', renderBookDetail);
 

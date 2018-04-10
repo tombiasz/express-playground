@@ -98,7 +98,7 @@ exports.renderBookCreateForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_create_post = [
+exports.validateBookForm = [
   // Convert the genre to an array.
   (req, res, next) => {
     const { genre } = req.body;
@@ -131,51 +131,57 @@ exports.book_create_post = [
   sanitizeBody('*')
     .trim()
     .escape(),
-
-  (req, res, next) => {
-    const errors = validationResult(req);
-    const {
-      title,
-      author,
-      summary,
-      isbn,
-      genre,
-    } = req.body;
-    const book = new Book({
-      title,
-      author,
-      summary,
-      isbn,
-      genre,
-    });
-
-    if (!errors.isEmpty()) {
-      Promise
-        .all([
-          Author.find().exec(),
-          Genre.find().exec(),
-        ])
-        .then((results) => {
-          const [authors, genres] = results;
-
-          // mark our selected genres as checked.
-          for (let i = 0; i < genres.length; i += 1) {
-            if (book.genre.indexOf(genres[i].id) > -1) {
-              genres[i].checked = 'true';
-            }
-          }
-
-          res.render('book_form', { title: 'Create Book', authors, genres, book, errors: errors.array() });
-        })
-        .catch(next);
-    } else {
-      book
-        .save()
-        .then(() => res.redirect(book.url))
-        .catch(next);
-    }
-  },
 ];
+
+exports.processBookCreateForm = (req, res, next) => {
+  const errors = validationResult(req);
+  const {
+    title,
+    author,
+    summary,
+    isbn,
+    genre,
+  } = req.body;
+  const newBook = new Book({
+    title,
+    author,
+    summary,
+    isbn,
+    genre,
+  });
+
+  if (!errors.isEmpty()) {
+    Promise
+      .all([
+        Author.find().exec(),
+        Genre.find().exec(),
+      ])
+      .then((results) => {
+        const [authors, genres] = results;
+
+        // mark our selected genres as checked.
+        for (let i = 0; i < genres.length; i += 1) {
+          if (newBook.genre.indexOf(genres[i].id) > -1) {
+            genres[i].checked = 'true';
+          }
+        }
+
+        res.render('book_form', {
+          title: 'Create Book',
+          authors,
+          genres,
+          book: newBook,
+          errors: errors.array(),
+        });
+      })
+      .catch(next);
+  } else {
+    newBook
+      .save()
+      .then(() => res.redirect(newBook.url))
+      .catch(next);
+  }
+};
 
 exports.book_delete_get = (req, res, next) => {
   const { id } = req.params;
