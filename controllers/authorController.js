@@ -8,7 +8,6 @@ const Book = require('../models/book');
 
 exports.getAuthorById = (req, res, next) => {
   const { id } = req.params;
-  console.log('wello,', id );
   Author
     .findById(id)
     .exec()
