@@ -28,8 +28,9 @@ router.get('/:id', getAuthorBooks, renderAuthorDetail);
 
 router
   .route('/:id/delete')
-  .get(getAuthorBooks, renderAuthorDeleteGet)
-  .post(getAuthorBooks, renderAuthorDeletePost);
+  .all(getAuthorBooks)
+  .get(renderAuthorDeleteGet)
+  .post(renderAuthorDeletePost);
 
 router
   .route('/:id/update')
