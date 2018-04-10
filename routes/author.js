@@ -2,18 +2,16 @@
 const express = require('express');
 
 const {
+  createAuthorOrRedirect,
   getAuthorBooks,
   getAuthorById,
   renderAuthorCreateGet,
-  renderAuthorCreatePost,
   renderAuthorDeleteGet,
   renderAuthorDeletePost,
   renderAuthorDetail,
   renderAuthorUpdateGet,
-  renderAuthorUpdatePost,
-
-  validateAuthorForm,
   updateAuthorOrRedirect,
+  validateAuthorForm,
 } = require('../controllers/authorController');
 
 
@@ -24,7 +22,7 @@ router.param('id', getAuthorById);
 router
   .route('/create')
   .get(renderAuthorCreateGet)
-  .post(renderAuthorCreatePost);
+  .post(validateAuthorForm, createAuthorOrRedirect);
 
 router.get('/:id', getAuthorBooks, renderAuthorDetail);
 

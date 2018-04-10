@@ -138,67 +138,30 @@ exports.updateAuthorOrRedirect = (req, res, next) => {
   }
 };
 
-exports.renderAuthorCreatePost = [
-  body('first_name')
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage('First name must be specified.')
-    .isAlphanumeric()
-    .withMessage('First name has non-alphanumeric characters.'),
+exports.createAuthorOrRedirect = (req, res, next) => {
+  const errors = validationResult(req);
+  const {
+    first_name,
+    family_name,
+    date_of_birth,
+    date_of_death,
+  } = req.body;
+  const author = new Author({
+    first_name,
+    family_name,
+    date_of_birth,
+    date_of_death,
+  });
 
-  body('family_name')
-    .isLength({ min: 1 })
-    .trim().withMessage('Family name must be specified.')
-    .isAlphanumeric()
-    .withMessage('Family name has non-alphanumeric characters.'),
-
-  body('date_of_birth', 'Invalid date of birth')
-    .optional({ checkFalsy: true })
-    .isISO8601(),
-
-  body('date_of_death', 'Invalid date of death')
-    .optional({ checkFalsy: true })
-    .isISO8601(),
-
-  sanitizeBody('first_name')
-    .trim()
-    .escape(),
-
-  sanitizeBody('family_name')
-    .trim()
-    .escape(),
-
-  sanitizeBody('date_of_birth')
-    .toDate(),
-
-  sanitizeBody('date_of_death')
-    .toDate(),
-
-  (req, res, next) => {
-    const errors = validationResult(req);
-    const {
-      first_name,
-      family_name,
-      date_of_birth,
-      date_of_death,
-    } = req.body;
-    const author = new Author({
-      first_name,
-      family_name,
-      date_of_birth,
-      date_of_death,
-    });
-
-    if (!errors.isEmpty()) {
-      res.render('author_form', { title: 'Create Author', author, errors: errors.array() });
-    } else {
-      author
-        .save()
-        .then(() => res.redirect(author.url))
-        .catch(next);
-    }
-  },
-];
+  if (!errors.isEmpty()) {
+    res.render('author_form', { title: 'Create Author', author, errors: errors.array() });
+  } else {
+    author
+      .save()
+      .then(() => res.redirect(author.url))
+      .catch(next);
+  }
+};
 
 exports.renderAuthorDeleteGet = (req, res) => {
   const { author, authorBooks } = res;
