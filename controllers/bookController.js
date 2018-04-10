@@ -36,7 +36,7 @@ exports.renderIndex = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_list = (req, res, next) => {
+exports.renderBookList = (req, res, next) => {
   Book
     .find({}, 'title author')
     .populate('author')

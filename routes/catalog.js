@@ -17,7 +17,7 @@ const router = express.Router();
 
 router.get('/', bookController.renderIndex);
 router.use('/book', bookRouter);
-router.get('/books', bookController.book_list);
+router.get('/books', bookController.renderBookList);
 
 router.use('/author', authorRouter);
 router.get('/authors', getAllAuthors, renderAuthorList);
