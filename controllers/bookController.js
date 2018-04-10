@@ -224,12 +224,11 @@ exports.renderBookUpdateForm = (req, res, next) => {
     .find()
     .exec()
     .then((genres) => {
-
       // mark our selected genres as checked.
-      for (let all_g_iter = 0; all_g_iter < genres.length; all_g_iter += 1) {
-        for (let book_g_iter = 0; book_g_iter < book.genre.length; book_g_iter += 1) {
-          if (genres[all_g_iter].id.toString() === book.genre[book_g_iter].id.toString()) {
-            genres[all_g_iter].checked = 'true';
+      for (let i = 0; i < genres.length; i += 1) {
+        for (let j = 0; j < book.genre.length; j += 1) {
+          if (genres[i].id.toString() === book.genre[j].id.toString()) {
+            genres[i].checked = 'true';
           }
         }
       }
