@@ -224,22 +224,15 @@ exports.processBookDeleteForm = (req, res, next) => {
 };
 
 exports.renderBookUpdateForm = (req, res, next) => {
-  const { id } = req.params;
+  const { book } = res;
 
   Promise
     .all([
-      Book.findById(id).populate('author').populate('genre').exec(),
       Author.find().exec(),
       Genre.find().exec(),
     ])
     .then((results) => {
-      const [book, authors, genres] = results;
-
-      if (book === null) {
-        const err = new Error('Book not found');
-        err.status = 404;
-        return next(err);
-      }
+      const [authors, genres] = results;
 
       // mark our selected genres as checked.
       for (let all_g_iter = 0; all_g_iter < genres.length; all_g_iter += 1) {
@@ -249,7 +242,12 @@ exports.renderBookUpdateForm = (req, res, next) => {
           }
         }
       }
-      res.render('book_form', { title: 'Update Book', authors, genres, book });
+      res.render('book_form', {
+        title: 'Update Book',
+        authors,
+        genres,
+        book,
+      });
     })
     .catch(next);
 };
