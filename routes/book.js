@@ -5,7 +5,7 @@ const bookController = require('../controllers/bookController');
 
 const router = express.Router();
 
-router.get('/', bookController.index);
+router.get('/', bookController.renderIndex);
 
 router
   .route('/create')

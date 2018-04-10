@@ -7,7 +7,7 @@ const Genre = require('../models/genre');
 const BookInstance = require('../models/bookinstance');
 
 
-exports.index = (req, res, next) => {
+exports.renderIndex = (req, res, next) => {
   Promise
     .all([
       Book.count({}).exec(),
