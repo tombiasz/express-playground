@@ -1,5 +1,7 @@
 const chai = require('chai');
+const httpMocks = require('node-mocks-http');
 const mocha = require('mocha');
+const sinon = require('sinon');
 
 const Author = require('../../models/author');
 const authorController = require('../../controllers/authorController');
@@ -37,8 +39,38 @@ describe('Author controller', () => {
   });
 
   describe('getAuthorById', () => {
-    it('should set author property on response object', (done) => {
-      done(new Error('todo'));
+    it('should set author property on response object based on passed id parameter', (done) => {
+      const { author1 } = this;
+      const req = httpMocks.createRequest({
+        params: {
+          id: author1.id,
+        },
+      });
+      const res = httpMocks.createResponse();
+      const next = sinon.spy();
+
+      authorController.getAuthorById(req, res, next).then(() => {
+        expect(res.author.id).to.equal(author1.id);
+        expect(next.calledWithExactly()).to.be.true;
+        done();
+      });
+    });
+
+    it('should call next with 404 error when author was not found', (done) => {
+      const req = httpMocks.createRequest({
+        params: {
+          id: '507f1f77bcf86cd799439011',
+        },
+      });
+      const res = httpMocks.createResponse();
+      const next = sinon.spy();
+
+      authorController.getAuthorById(req, res, next).then(() => {
+        const [httpError] = next.firstCall.args;
+        expect(httpError.status).to.equal(404);
+        expect(httpError.message).to.equal('Author not found');
+        done();
+      });
     });
   });
 });
