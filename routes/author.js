@@ -12,7 +12,7 @@ router
   .get(authorController.author_create_get)
   .post(authorController.author_create_post);
 
-router.get('/:id', authorController.author_detail);
+router.get('/:id', authorController.getAuthorBooks, authorController.renderAuthorDetail);
 
 router
   .route('/:id/delete')

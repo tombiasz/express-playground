@@ -34,6 +34,18 @@ exports.getAllAuthors = (req, res, next) => {
     .catch(next);
 };
 
+exports.getAuthorBooks = (req, res, next) => {
+  const { author } = res;
+  Book
+    .find({ author: author.id }, 'title summary')
+    .exec()
+    .then((authorBooks) => {
+      res.authorBooks = authorBooks;
+      next();
+    })
+    .catch(next);
+};
+
 exports.renderAuthorList = (req, res) => {
   const { authorList } = res;
   res.render('author_list', {
@@ -42,17 +54,13 @@ exports.renderAuthorList = (req, res) => {
   });
 };
 
-exports.author_detail = (req, res, next) => {
-  const { id } = req.params;
-  const { author } = res;
-
-  Book
-    .find({ author: id }, 'title summary')
-    .exec()
-    .then((author_books) => {
-      res.render('author_detail', { title: 'Author Detail', author, author_books });
-    })
-    .catch(next);
+exports.renderAuthorDetail = (req, res) => {
+  const { author, authorBooks } = res;
+  res.render('author_detail', {
+    title: 'Author Detail',
+    author,
+    author_books: authorBooks,
+  });
 };
 
 exports.author_create_get = (req, res) => {
