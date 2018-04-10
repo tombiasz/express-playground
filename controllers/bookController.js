@@ -26,6 +26,18 @@ exports.getBookById = (req, res, next) => {
     .catch(next);
 };
 
+exports.getAllBooks = (req, res, next) => {
+  Book
+    .find()
+    .sort([['title', 'ascending']])
+    .exec()
+    .then((bookList) => {
+      res.bookList = Array.isArray(bookList) ? bookList : [];
+      next();
+    })
+    .catch(next);
+};
+
 exports.getBookBookInstances = (req, res, next) => {
   const { book } = res;
 
