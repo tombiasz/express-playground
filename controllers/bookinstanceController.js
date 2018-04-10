@@ -189,15 +189,15 @@ exports.processBookInstanceUpdateForm = [
 
   (req, res, next) => {
     const errors = validationResult(req);
-    const { id } = req.params;
+    const { bookinstance } = res;
     const {
       book,
       imprint,
       status,
       due_back,
     } = req.body;
-    const bookinstance = new BookInstance({
-      _id: id,
+    const updatedBookinstance = new BookInstance({
+      _id: bookinstance.id,
       book,
       imprint,
       status,
@@ -212,16 +212,16 @@ exports.processBookInstanceUpdateForm = [
           res.render('bookinstance_form', {
             title: 'Update BookInstance',
             book_list,
-            bookinstance,
+            bookinstance: updatedBookinstance,
             errors: errors.array(),
           });
         })
         .catch(next);
     } else {
       BookInstance
-        .findByIdAndUpdate(id, bookinstance)
+        .findByIdAndUpdate(bookinstance.id, updatedBookinstance)
         .exec()
-        .then(() => res.redirect(bookinstance.url))
+        .then(() => res.redirect(updatedBookinstance.url))
         .catch(next);
     }
   },
