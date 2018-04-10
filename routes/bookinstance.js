@@ -5,6 +5,7 @@ const {
   renderBookInstanceDeleteForm,
   renderBookInstanceDetail,
   renderBookInstanceCreateForm,
+  renderBookInstanceUpdateForm,
 
   processBookInstanceCreateForm,
   processBookInstanceDeleteForm,
@@ -27,7 +28,7 @@ router
 
 router
   .route('/:id/update')
-  .get(bookinstanceController.bookinstance_update_get)
+  .get(renderBookInstanceUpdateForm)
   .post(bookinstanceController.bookinstance_update_post);
 
 module.exports = router;

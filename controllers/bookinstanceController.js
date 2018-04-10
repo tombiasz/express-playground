@@ -139,7 +139,7 @@ exports.processBookInstanceDeleteForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.bookinstance_update_get = (req, res, next) => {
+exports.renderBookInstanceUpdateForm = (req, res, next) => {
   const { id } = req.params;
 
   Promise
