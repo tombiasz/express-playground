@@ -253,8 +253,8 @@ exports.renderBookUpdateForm = (req, res, next) => {
 };
 
 exports.processBookUpdateForm = (req, res, next) => {
+  const { book } = res;
   const errors = validationResult(req);
-  const { id } = req.params;
   const {
     title,
     author,
@@ -262,8 +262,8 @@ exports.processBookUpdateForm = (req, res, next) => {
     isbn,
     genre,
   } = req.body;
-  const book = new Book({
-    _id: id,
+  const updatedBook = new Book({
+    _id: book.id,
     title,
     author,
     summary,
@@ -282,7 +282,7 @@ exports.processBookUpdateForm = (req, res, next) => {
 
         // mark our selected genres as checked.
         for (let i = 0; i < genres.length; i += 1) {
-          if (book.genre.indexOf(genres[i].id) > -1) {
+          if (updatedBook.genre.indexOf(genres[i].id) > -1) {
             genres[i].checked = 'true';
           }
         }
@@ -291,16 +291,16 @@ exports.processBookUpdateForm = (req, res, next) => {
           title: 'Update Book',
           authors,
           genres,
-          book,
+          book: updatedBook,
           errors: errors.array(),
         });
       })
       .catch(next);
   } else {
     Book
-      .findByIdAndUpdate(id, book)
+      .findByIdAndUpdate(book.id, updatedBook)
       .exec()
-      .then(() => res.redirect(book.url))
+      .then(() => res.redirect(updatedBook.url))
       .catch(next);
   }
 };
