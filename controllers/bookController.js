@@ -93,14 +93,16 @@ exports.renderBookDetail = (req, res) => {
 };
 
 exports.renderBookCreateForm = (req, res, next) => {
-  Promise
-    .all([
-      Author.find().exec(),
-      Genre.find().exec(),
-    ])
-    .then((results) => {
-      const [authors, genres] = results;
-      res.render('book_form', { title: 'Create Book', authors, genres });
+  const { authorList } = res;
+  Genre
+    .find()
+    .exec()
+    .then((genres) => {
+      res.render('book_form', {
+        title: 'Create Book',
+        authors: authorList,
+        genres,
+      });
     })
     .catch(next);
 };
@@ -141,6 +143,7 @@ exports.validateBookForm = [
 ];
 
 exports.processBookCreateForm = (req, res, next) => {
+  const { authorList } = res;
   const errors = validationResult(req);
   const {
     title,
@@ -158,14 +161,10 @@ exports.processBookCreateForm = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    Promise
-      .all([
-        Author.find().exec(),
-        Genre.find().exec(),
-      ])
-      .then((results) => {
-        const [authors, genres] = results;
-
+    Genre
+      .find()
+      .exec()
+      .then((genres) => {
         // mark our selected genres as checked.
         for (let i = 0; i < genres.length; i += 1) {
           if (newBook.genre.indexOf(genres[i].id) > -1) {
@@ -175,7 +174,7 @@ exports.processBookCreateForm = (req, res, next) => {
 
         res.render('book_form', {
           title: 'Create Book',
-          authors,
+          authors: authorList,
           genres,
           book: newBook,
           errors: errors.array(),
@@ -219,15 +218,12 @@ exports.processBookDeleteForm = (req, res, next) => {
 };
 
 exports.renderBookUpdateForm = (req, res, next) => {
-  const { book } = res;
+  const { book, authorList } = res;
 
-  Promise
-    .all([
-      Author.find().exec(),
-      Genre.find().exec(),
-    ])
-    .then((results) => {
-      const [authors, genres] = results;
+  Genre
+    .find()
+    .exec()
+    .then((genres) => {
 
       // mark our selected genres as checked.
       for (let all_g_iter = 0; all_g_iter < genres.length; all_g_iter += 1) {
@@ -239,7 +235,7 @@ exports.renderBookUpdateForm = (req, res, next) => {
       }
       res.render('book_form', {
         title: 'Update Book',
-        authors,
+        authors: authorList,
         genres,
         book,
       });
@@ -248,7 +244,7 @@ exports.renderBookUpdateForm = (req, res, next) => {
 };
 
 exports.processBookUpdateForm = (req, res, next) => {
-  const { book } = res;
+  const { book, authorList } = res;
   const errors = validationResult(req);
   const {
     title,
@@ -267,14 +263,10 @@ exports.processBookUpdateForm = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    Promise
-      .all([
-        Author.find().exec(),
-        Genre.find().exec(),
-      ])
-      .then((results) => {
-        const [authors, genres] = results;
-
+    Genre
+      .find()
+      .exec()
+      .then((genres) => {
         // mark our selected genres as checked.
         for (let i = 0; i < genres.length; i += 1) {
           if (updatedBook.genre.indexOf(genres[i].id) > -1) {
@@ -284,7 +276,7 @@ exports.processBookUpdateForm = (req, res, next) => {
 
         res.render('book_form', {
           title: 'Update Book',
-          authors,
+          authors: authorList,
           genres,
           book: updatedBook,
           errors: errors.array(),
