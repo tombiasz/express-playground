@@ -1,11 +1,16 @@
 const express = require('express');
 
 const bookController = require('../controllers/bookController');
+const {
+  getBookById,
+} = require('../controllers/bookController');
 
 
 const router = express.Router();
 
 router.get('/', bookController.renderIndex);
+
+router.param('id', getBookById);
 
 router
   .route('/create')

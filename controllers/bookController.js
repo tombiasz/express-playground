@@ -1,4 +1,5 @@
 const { body, validationResult } = require('express-validator/check');
+const createError = require('http-errors');
 const { sanitizeBody } = require('express-validator/filter');
 
 const Book = require('../models/book');
@@ -6,6 +7,24 @@ const Author = require('../models/author');
 const Genre = require('../models/genre');
 const BookInstance = require('../models/bookinstance');
 
+
+exports.getBookById = (req, res, next) => {
+  const { id } = req.params;
+  Book
+    .findById(id)
+    .populate('author')
+    .populate('genre')
+    .exec()
+    .then((book) => {
+      if (!book) {
+        next(createError(404, 'Book not found'));
+      } else {
+        res.book = book;
+        next();
+      }
+    })
+    .catch(next);
+};
 
 exports.renderIndex = (req, res, next) => {
   Promise
