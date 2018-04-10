@@ -129,17 +129,13 @@ exports.renderAuthorCreatePost = [
   },
 ];
 
-exports.author_delete_get = (req, res, next) => {
-  const { id } = req.params;
-  const { author } = res;
-
-  Book
-    .find({ author: id })
-    .exec()
-    .then((author_books) => {
-      res.render('author_delete', { title: 'Delete Author', author, author_books });
-    })
-    .catch(next);
+exports.renderAuthorDeleteGet = (req, res) => {
+  const { author, authorBooks } = res;
+  res.render('author_delete', {
+    title: 'Delete Author',
+    author,
+    author_books: authorBooks,
+  });
 };
 
 exports.author_delete_post = (req, res, next) => {
