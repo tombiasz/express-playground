@@ -3,6 +3,7 @@ const express = require('express');
 const bookController = require('../controllers/bookController');
 const {
   getBookById,
+  getBookBookInstances,
 
   renderBookCreateForm,
   renderBookDeleteForm,
@@ -28,12 +29,12 @@ router
   .get(renderBookCreateForm)
   .post(validateBookForm, processBookCreateForm);
 
-router.get('/:id', renderBookDetail);
+router.get('/:id', getBookBookInstances, renderBookDetail);
 
 router
   .route('/:id/delete')
-  .get(renderBookDeleteForm)
-  .post(processBookDeleteForm);
+  .get(getBookBookInstances, renderBookDeleteForm)
+  .post(getBookBookInstances, processBookDeleteForm);
 
 router
   .route('/:id/update')

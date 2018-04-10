@@ -26,6 +26,19 @@ exports.getBookById = (req, res, next) => {
     .catch(next);
 };
 
+exports.getBookBookInstances = (req, res, next) => {
+  const { book } = res;
+
+  BookInstance
+    .find({ book: book.id })
+    .exec()
+    .then((bookInstances) => {
+      res.bookInstances = Array.isArray(bookInstances) ? bookInstances : [];
+      next();
+    })
+    .catch(next);
+};
+
 exports.renderIndex = (req, res, next) => {
   Promise
     .all([
@@ -69,20 +82,14 @@ exports.renderBookList = (req, res, next) => {
     .catch(next);
 };
 
-exports.renderBookDetail = (req, res, next) => {
-  const { book } = res;
+exports.renderBookDetail = (req, res) => {
+  const { book, bookInstances } = res;
 
-  BookInstance
-    .find({ book: book.id })
-    .exec()
-    .then((bookInstance) => {
-      res.render('book_detail', {
-        title: 'Title',
-        book,
-        book_instances: bookInstance,
-      });
-    })
-    .catch(next);
+  res.render('book_detail', {
+    title: 'Title',
+    book,
+    book_instances: bookInstances,
+  });
 };
 
 exports.renderBookCreateForm = (req, res, next) => {
@@ -183,44 +190,32 @@ exports.processBookCreateForm = (req, res, next) => {
   }
 };
 
-exports.renderBookDeleteForm = (req, res, next) => {
-  const { book } = res;
+exports.renderBookDeleteForm = (req, res) => {
+  const { book, bookInstances } = res;
 
-  BookInstance
-    .find({ book: book.id })
-    .exec()
-    .then((bookInstance) => {
-      res.render('book_delete', {
-        title: 'Delete Book',
-        book,
-        book_instances: bookInstance,
-      });
-    })
-    .catch(next);
+  res.render('book_delete', {
+    title: 'Delete Book',
+    book,
+    book_instances: bookInstances,
+  });
 };
 
 exports.processBookDeleteForm = (req, res, next) => {
-  const { book } = res;
+  const { book, bookInstances } = res;
 
-  BookInstance
-    .find({ book: book.id })
-    .exec()
-    .then((bookInstances) => {
-      if (bookInstances.length > 0) {
-        res.render('book_delete', {
-          title: 'Delete Book',
-          book,
-          book_instances: bookInstances,
-        });
-      } else {
-        Book
-          .findByIdAndRemove(book.id)
-          .exec()
-          .then(() => res.redirect('/catalog/books'))
-          .catch(next);
-      }
-    })
-    .catch(next);
+  if (bookInstances.length > 0) {
+    res.render('book_delete', {
+      title: 'Delete Book',
+      book,
+      book_instances: bookInstances,
+    });
+  } else {
+    Book
+      .findByIdAndRemove(book.id)
+      .exec()
+      .then(() => res.redirect('/catalog/books'))
+      .catch(next);
+  }
 };
 
 exports.renderBookUpdateForm = (req, res, next) => {
