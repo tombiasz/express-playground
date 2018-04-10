@@ -10,7 +10,7 @@ router.param('id', authorController.getAuthorById);
 router
   .route('/create')
   .get(authorController.renderAuthorCreateGet)
-  .post(authorController.author_create_post);
+  .post(authorController.renderAuthorCreatePost);
 
 router.get('/:id', authorController.getAuthorBooks, authorController.renderAuthorDetail);
 

@@ -67,7 +67,7 @@ exports.renderAuthorCreateGet = (req, res) => {
   res.render('author_form', { title: 'Create Author' });
 };
 
-exports.author_create_post = [
+exports.renderAuthorCreatePost = [
   body('first_name')
     .isLength({ min: 1 })
     .trim()
