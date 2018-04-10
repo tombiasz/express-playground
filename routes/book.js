@@ -3,6 +3,8 @@ const express = require('express');
 const bookController = require('../controllers/bookController');
 const {
   getBookById,
+
+  renderBookDetail,
 } = require('../controllers/bookController');
 
 
@@ -17,7 +19,7 @@ router
   .get(bookController.book_create_get)
   .post(bookController.book_create_post);
 
-router.get('/:id', bookController.book_detail);
+router.get('/:id', renderBookDetail);
 
 router
   .route('/:id/delete')

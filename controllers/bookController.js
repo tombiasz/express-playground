@@ -69,7 +69,7 @@ exports.renderBookList = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_detail = (req, res, next) => {
+exports.renderBookDetail = (req, res, next) => {
   const { id } = req.params;
   Promise
     .all([
