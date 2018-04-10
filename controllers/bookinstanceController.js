@@ -124,19 +124,13 @@ exports.processBookInstanceCreateForm = [
   },
 ];
 
-exports.renderBookInstanceDeleteForm = (req, res, next) => {
-  const { id } = req.params;
+exports.renderBookInstanceDeleteForm = (req, res) => {
+  const { bookinstance } = res;
 
-  BookInstance
-    .findById(id)
-    .exec()
-    .then((bookinstance) => {
-      res.render('bookinstance_delete', {
-        title: 'Delete BookInstance',
-        bookinstance,
-      });
-    })
-    .catch(next);
+  res.render('bookinstance_delete', {
+    title: 'Delete BookInstance',
+    bookinstance,
+  });
 };
 
 exports.processBookInstanceDeleteForm = (req, res, next) => {
