@@ -199,7 +199,7 @@ exports.renderBookDeleteForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_delete_post = (req, res, next) => {
+exports.processBookDeleteForm = (req, res, next) => {
   const { id } = req.params;
 
   Promise

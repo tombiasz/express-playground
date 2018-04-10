@@ -9,6 +9,7 @@ const {
   renderBookDetail,
 
   processBookCreateForm,
+  processBookDeleteForm,
 
   validateBookForm,
 } = require('../controllers/bookController');
@@ -30,7 +31,7 @@ router.get('/:id', renderBookDetail);
 router
   .route('/:id/delete')
   .get(renderBookDeleteForm)
-  .post(bookController.book_delete_post);
+  .post(processBookDeleteForm);
 
 router
   .route('/:id/update')
