@@ -7,6 +7,7 @@ const {
   renderBookCreateForm,
   renderBookDeleteForm,
   renderBookDetail,
+  renderBookUpdateForm,
 
   processBookCreateForm,
   processBookDeleteForm,
@@ -35,7 +36,7 @@ router
 
 router
   .route('/:id/update')
-  .get(bookController.book_update_get)
+  .get(renderBookUpdateForm)
   .post(bookController.book_update_post);
 
 module.exports = router;

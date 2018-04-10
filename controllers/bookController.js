@@ -223,7 +223,7 @@ exports.processBookDeleteForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_update_get = (req, res, next) => {
+exports.renderBookUpdateForm = (req, res, next) => {
   const { id } = req.params;
 
   Promise
