@@ -11,6 +11,8 @@ const {
   processBookInstanceCreateForm,
   processBookInstanceDeleteForm,
   processBookInstanceUpdateForm,
+
+  validateBookInstanceForm,
 } = require('../controllers/bookinstanceController');
 
 
@@ -21,7 +23,7 @@ router.param('id', getBookInstanceById);
 router
   .route('/create')
   .get(renderBookInstanceCreateForm)
-  .post(processBookInstanceCreateForm);
+  .post(validateBookInstanceForm, processBookInstanceCreateForm);
 
 router.get('/:id', renderBookInstanceDetail);
 

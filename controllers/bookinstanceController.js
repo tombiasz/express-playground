@@ -59,7 +59,7 @@ exports.renderBookInstanceCreateForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.processBookInstanceCreateForm = [
+exports.validateBookInstanceForm = [
   body('book', 'Book must be specified')
     .isLength({ min: 1 })
     .trim(),
@@ -86,43 +86,43 @@ exports.processBookInstanceCreateForm = [
 
   sanitizeBody('due_back')
     .toDate(),
-
-  (req, res, next) => {
-    const errors = validationResult(req);
-    const {
-      book,
-      imprint,
-      status,
-      due_back,
-    } = req.body;
-    const bookinstance = new BookInstance({
-      book,
-      imprint,
-      status,
-      due_back,
-    });
-
-    if (!errors.isEmpty()) {
-      Book
-        .find({}, 'title')
-        .exec()
-        .then((book_list) => {
-          res.render('bookinstance_form', {
-            title: 'Create BookInstance',
-            book_list,
-            bookinstance,
-            errors: errors.array(),
-          });
-        })
-        .catch(next);
-    } else {
-      bookinstance
-        .save()
-        .then(() => res.redirect(bookinstance.url))
-        .catch(next);
-    }
-  },
 ];
+
+exports.processBookInstanceCreateForm = (req, res, next) => {
+  const errors = validationResult(req);
+  const {
+    book,
+    imprint,
+    status,
+    due_back,
+  } = req.body;
+  const bookinstance = new BookInstance({
+    book,
+    imprint,
+    status,
+    due_back,
+  });
+
+  if (!errors.isEmpty()) {
+    Book
+      .find({}, 'title')
+      .exec()
+      .then((book_list) => {
+        res.render('bookinstance_form', {
+          title: 'Create BookInstance',
+          book_list,
+          bookinstance,
+          errors: errors.array(),
+        });
+      })
+      .catch(next);
+  } else {
+    bookinstance
+      .save()
+      .then(() => res.redirect(bookinstance.url))
+      .catch(next);
+  }
+};
 
 exports.renderBookInstanceDeleteForm = (req, res) => {
   const { bookinstance } = res;
