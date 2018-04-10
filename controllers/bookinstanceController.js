@@ -144,22 +144,12 @@ exports.processBookInstanceDeleteForm = (req, res, next) => {
 };
 
 exports.renderBookInstanceUpdateForm = (req, res, next) => {
-  const { id } = req.params;
+  const { bookinstance } = res;
 
-  Promise
-    .all([
-      BookInstance.findById(id).exec(),
-      Book.find().exec(),
-    ])
-    .then((results) => {
-      const [bookinstance, book_list] = results;
-
-      if (bookinstance === null) {
-        const err = new Error('BookInstance not found');
-        err.status = 404;
-        return next(err);
-      }
-
+  Book
+    .find()
+    .exec()
+    .then((book_list) => {
       res.render('bookinstance_form', {
         title: 'Update BookInstance',
         bookinstance,
