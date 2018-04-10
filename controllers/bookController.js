@@ -252,101 +252,49 @@ exports.renderBookUpdateForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.book_update_post = [
+exports.processBookUpdateForm = (req, res, next) => {
+  const errors = validationResult(req);
+  const { id } = req.params;
+  const {
+    title,
+    author,
+    summary,
+    isbn,
+    genre,
+  } = req.body;
+  const book = new Book({
+    _id: id,
+    title,
+    author,
+    summary,
+    isbn,
+    genre,
+  });
 
-  (req, res, next) => {
-    const { genre } = req.body;
+  if (!errors.isEmpty()) {
+    Promise
+      .all([
+        Author.find().exec(),
+        Genre.find().exec(),
+      ])
+      .then((results) => {
+        const [authors, genres] = results;
 
-    if (!(genre instanceof Array)) {
-      if (typeof genre === 'undefined') {
-        req.body.genre = [];
-      } else {
-        req.body.genre = new Array(genre);
-      }
-    }
-    next();
-  },
-
-  body('title', 'Title must not be empty.')
-    .isLength({ min: 1 })
-    .trim(),
-
-  body('author', 'Author must not be empty.')
-    .isLength({ min: 1 })
-    .trim(),
-
-  body('summary', 'Summary must not be empty.')
-    .isLength({ min: 1 })
-    .trim(),
-
-  body('isbn', 'ISBN must not be empty')
-    .isLength({ min: 1 })
-    .trim(),
-
-  sanitizeBody('title')
-    .trim()
-    .escape(),
-
-  sanitizeBody('author')
-    .trim()
-    .escape(),
-
-  sanitizeBody('summary')
-    .trim()
-    .escape(),
-
-  sanitizeBody('isbn')
-    .trim()
-    .escape(),
-
-  sanitizeBody('genre.*')
-    .trim()
-    .escape(),
-
-  (req, res, next) => {
-    const errors = validationResult(req);
-    const { id } = req.params;
-    const {
-      title,
-      author,
-      summary,
-      isbn,
-      genre,
-    } = req.body;
-    const book = new Book({
-      _id: id,
-      title,
-      author,
-      summary,
-      isbn,
-      genre,
-    });
-
-    if (!errors.isEmpty()) {
-      Promise
-        .all([
-          Author.find().exec(),
-          Genre.find().exec(),
-        ])
-        .then((results) => {
-          const [authors, genres] = results;
-
-          // mark our selected genres as checked.
-          for (let i = 0; i < genres.length; i += 1) {
-            if (book.genre.indexOf(genres[i].id) > -1) {
-              genres[i].checked = 'true';
-            }
+        // mark our selected genres as checked.
+        for (let i = 0; i < genres.length; i += 1) {
+          if (book.genre.indexOf(genres[i].id) > -1) {
+            genres[i].checked = 'true';
           }
+        }
 
-          res.render('book_form', { title: 'Update Book', authors, genres, book, errors: errors.array() });
-        })
-        .catch(next);
-    } else {
-      Book
-        .findByIdAndUpdate(id, book)
-        .exec()
-        .then(() => res.redirect(book.url))
-        .catch(next);
-    }
-  },
-];
+        res.render('book_form', { title: 'Update Book', authors, genres, book, errors: errors.array() });
+      })
+      .catch(next);
+  } else {
+    Book
+      .findByIdAndUpdate(id, book)
+      .exec()
+      .then(() => res.redirect(book.url))
+      .catch(next);
+  }
+};
