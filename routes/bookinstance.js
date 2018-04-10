@@ -36,6 +36,7 @@ router
 
 router
   .route('/:id/update')
+  .all(getAllBooks)
   .get(renderBookInstanceUpdateForm)
   .post(validateBookInstanceForm, processBookInstanceUpdateForm);
 

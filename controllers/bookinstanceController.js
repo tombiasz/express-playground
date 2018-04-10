@@ -134,25 +134,19 @@ exports.processBookInstanceDeleteForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.renderBookInstanceUpdateForm = (req, res, next) => {
-  const { bookinstance } = res;
+exports.renderBookInstanceUpdateForm = (req, res) => {
+  const { bookinstance, bookList } = res;
 
-  Book
-    .find()
-    .exec()
-    .then((book_list) => {
-      res.render('bookinstance_form', {
-        title: 'Update BookInstance',
-        bookinstance,
-        book_list,
-      });
-    })
-    .catch(next);
+  res.render('bookinstance_form', {
+    title: 'Update BookInstance',
+    bookinstance,
+    book_list: bookList,
+  });
 };
 
 exports.processBookInstanceUpdateForm = (req, res, next) => {
   const errors = validationResult(req);
-  const { bookinstance } = res;
+  const { bookinstance, bookList } = res;
   const {
     book,
     imprint,
@@ -168,18 +162,12 @@ exports.processBookInstanceUpdateForm = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    Book
-      .find({}, 'title')
-      .exec()
-      .then((book_list) => {
-        res.render('bookinstance_form', {
-          title: 'Update BookInstance',
-          book_list,
-          bookinstance: updatedBookinstance,
-          errors: errors.array(),
-        });
-      })
-      .catch(next);
+    res.render('bookinstance_form', {
+      title: 'Update BookInstance',
+      book_list: bookList,
+      bookinstance: updatedBookinstance,
+      errors: errors.array(),
+    });
   } else {
     BookInstance
       .findByIdAndUpdate(bookinstance.id, updatedBookinstance)
