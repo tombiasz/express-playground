@@ -11,6 +11,7 @@ const {
 
   processBookCreateForm,
   processBookDeleteForm,
+  processBookUpdateForm,
 
   validateBookForm,
 } = require('../controllers/bookController');
@@ -37,6 +38,6 @@ router
 router
   .route('/:id/update')
   .get(renderBookUpdateForm)
-  .post(bookController.book_update_post);
+  .post(validateBookForm, processBookUpdateForm);
 
 module.exports = router;
