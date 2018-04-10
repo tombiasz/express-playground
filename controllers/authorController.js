@@ -15,7 +15,7 @@ exports.getAuthorById = (req, res, next) => {
       if (!author) {
         next(createError(404, 'Author not found'));
       } else {
-        req.author = author;
+        res.author = author;
         next();
       }
     })
@@ -44,7 +44,7 @@ exports.renderAuthorList = (req, res) => {
 
 exports.author_detail = (req, res, next) => {
   const { id } = req.params;
-  const { author } = req;
+  const { author } = res;
 
   Book
     .find({ author: id }, 'title summary')
@@ -123,7 +123,7 @@ exports.author_create_post = [
 
 exports.author_delete_get = (req, res, next) => {
   const { id } = req.params;
-  const { author } = req;
+  const { author } = res;
 
   Book
     .find({ author: id })
@@ -136,7 +136,7 @@ exports.author_delete_get = (req, res, next) => {
 
 exports.author_delete_post = (req, res, next) => {
   const { id } = req.params;
-  const { author } = req;
+  const { author } = res;
 
   Book
     .find({ author: id })
@@ -158,7 +158,7 @@ exports.author_delete_post = (req, res, next) => {
 };
 
 exports.author_update_get = (req, res) => {
-  const { author } = req;
+  const { author } = res;
   res.render('author_form', { title: 'Update Author', author });
 };
 
