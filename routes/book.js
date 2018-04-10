@@ -5,6 +5,7 @@ const {
   getBookById,
 
   renderBookCreateForm,
+  renderBookDeleteForm,
   renderBookDetail,
 
   processBookCreateForm,
@@ -28,7 +29,7 @@ router.get('/:id', renderBookDetail);
 
 router
   .route('/:id/delete')
-  .get(bookController.book_delete_get)
+  .get(renderBookDeleteForm)
   .post(bookController.book_delete_post);
 
 router

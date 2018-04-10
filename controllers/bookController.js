@@ -183,7 +183,7 @@ exports.processBookCreateForm = (req, res, next) => {
   }
 };
 
-exports.book_delete_get = (req, res, next) => {
+exports.renderBookDeleteForm = (req, res, next) => {
   const { id } = req.params;
 
   Promise
