@@ -9,16 +9,16 @@ exports.renderBookInstanceList = (req, res, next) => {
   BookInstance.find()
     .populate('book')
     .exec()
-    .then((bookinstance_list) => {
+    .then((bookinstanceList) => {
       res.render('bookinstance_list', {
         title: 'Book Instance List',
-        bookinstance_list,
+        bookinstance_list: bookinstanceList,
       });
     })
     .catch(next);
 };
 
-exports.bookinstance_detail = (req, res, next) => {
+exports.renderBookInstanceDetail = (req, res, next) => {
   const { id } = req.params;
   BookInstance
     .findById(id)

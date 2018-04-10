@@ -1,6 +1,9 @@
 const express = require('express');
 
 const bookinstanceController = require('../controllers/bookinstanceController');
+const {
+  renderBookInstanceDetail,
+} = require('../controllers/bookinstanceController');
 
 
 const router = express.Router();
@@ -10,7 +13,7 @@ router
   .get(bookinstanceController.bookinstance_create_get)
   .post(bookinstanceController.bookinstance_create_post);
 
-router.get('/:id', bookinstanceController.bookinstance_detail);
+router.get('/:id', renderBookInstanceDetail);
 
 router
   .route('/:id/delete')
