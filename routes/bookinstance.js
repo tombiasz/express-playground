@@ -1,5 +1,6 @@
 const express = require('express');
 
+const { getAllBooks } = require('../controllers/bookController');
 const {
   getBookInstanceById,
 
@@ -22,6 +23,7 @@ router.param('id', getBookInstanceById);
 
 router
   .route('/create')
+  .all(getAllBooks)
   .get(renderBookInstanceCreateForm)
   .post(validateBookInstanceForm, processBookInstanceCreateForm);
 

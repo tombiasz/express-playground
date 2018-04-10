@@ -46,17 +46,13 @@ exports.renderBookInstanceDetail = (req, res) => {
   });
 };
 
-exports.renderBookInstanceCreateForm = (req, res, next) => {
-  Book
-    .find({}, 'title')
-    .exec()
-    .then((book_list) => {
-      res.render('bookinstance_form', {
-        title: 'Create BookInstance',
-        book_list,
-      });
-    })
-    .catch(next);
+exports.renderBookInstanceCreateForm = (req, res) => {
+  const { bookList } = res;
+
+  res.render('bookinstance_form', {
+    title: 'Create BookInstance',
+    book_list: bookList,
+  });
 };
 
 exports.validateBookInstanceForm = [
@@ -89,6 +85,7 @@ exports.validateBookInstanceForm = [
 ];
 
 exports.processBookInstanceCreateForm = (req, res, next) => {
+  const { bookList } = res;
   const errors = validationResult(req);
   const {
     book,
@@ -104,18 +101,12 @@ exports.processBookInstanceCreateForm = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    Book
-      .find({}, 'title')
-      .exec()
-      .then((book_list) => {
-        res.render('bookinstance_form', {
-          title: 'Create BookInstance',
-          book_list,
-          bookinstance,
-          errors: errors.array(),
-        });
-      })
-      .catch(next);
+    res.render('bookinstance_form', {
+      title: 'Create BookInstance',
+      book_list: bookList,
+      bookinstance,
+      errors: errors.array(),
+    });
   } else {
     bookinstance
       .save()
