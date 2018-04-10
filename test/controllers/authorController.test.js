@@ -9,7 +9,7 @@ const dbUtils = require('../../utils/db.js');
 
 
 const { expect } = chai;
-const { describe, it, before } = mocha;
+const { describe, it, before, beforeEach } = mocha;
 
 
 describe('Author controller', () => {
@@ -39,16 +39,17 @@ describe('Author controller', () => {
   });
 
   describe('getAuthorById', () => {
-    it('should set author property on response object based on passed id parameter', (done) => {
-      const { author1 } = this;
-      const req = httpMocks.createRequest({
-        params: {
-          id: author1.id,
-        },
-      });
-      const res = httpMocks.createResponse();
-      const next = sinon.spy();
+    beforeEach((done) => {
+      this.req = httpMocks.createRequest();
+      this.res = httpMocks.createResponse();
+      this.next = sinon.spy();
+      done();
+    });
 
+    it('should set author property on response object based on passed id parameter', (done) => {
+      const { res, req, next, author1 } = this;
+
+      req.params.id = author1.id;
       authorController.getAuthorById(req, res, next).then(() => {
         expect(res.author.id).to.equal(author1.id);
         expect(next.calledWithExactly()).to.be.true;
@@ -57,14 +58,9 @@ describe('Author controller', () => {
     });
 
     it('should call next with 404 error when author was not found', (done) => {
-      const req = httpMocks.createRequest({
-        params: {
-          id: '507f1f77bcf86cd799439011',
-        },
-      });
-      const res = httpMocks.createResponse();
-      const next = sinon.spy();
+      const { res, req, next } = this;
 
+      req.params.id = '507f1f77bcf86cd799439011';
       authorController.getAuthorById(req, res, next).then(() => {
         const [httpError] = next.firstCall.args;
         expect(httpError.status).to.equal(404);
