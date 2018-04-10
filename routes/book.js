@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { getAllAuthors } = require('../controllers/authorController');
+const { getAllGenres } = require('../controllers/genreController');
 const {
   getBookById,
   getBookBookInstances,
@@ -27,7 +28,7 @@ router.param('id', getBookById);
 
 router
   .route('/create')
-  .all(getAllAuthors)
+  .all(getAllAuthors, getAllGenres)
   .get(renderBookCreateForm)
   .post(validateBookForm, processBookCreateForm);
 
@@ -40,7 +41,7 @@ router
 
 router
   .route('/:id/update')
-  .all(getAllAuthors)
+  .all(getAllAuthors, getAllGenres)
   .get(renderBookUpdateForm)
   .post(validateBookForm, processBookUpdateForm);
 

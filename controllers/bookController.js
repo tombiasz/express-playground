@@ -92,19 +92,13 @@ exports.renderBookDetail = (req, res) => {
   });
 };
 
-exports.renderBookCreateForm = (req, res, next) => {
-  const { authorList } = res;
-  Genre
-    .find()
-    .exec()
-    .then((genres) => {
-      res.render('book_form', {
-        title: 'Create Book',
-        authors: authorList,
-        genres,
-      });
-    })
-    .catch(next);
+exports.renderBookCreateForm = (req, res) => {
+  const { authorList, genreList } = res;
+  res.render('book_form', {
+    title: 'Create Book',
+    authors: authorList,
+    genres: genreList,
+  });
 };
 
 exports.validateBookForm = [
@@ -143,7 +137,7 @@ exports.validateBookForm = [
 ];
 
 exports.processBookCreateForm = (req, res, next) => {
-  const { authorList } = res;
+  const { authorList, genreList } = res;
   const errors = validationResult(req);
   const {
     title,
@@ -161,26 +155,20 @@ exports.processBookCreateForm = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    Genre
-      .find()
-      .exec()
-      .then((genres) => {
-        // mark our selected genres as checked.
-        for (let i = 0; i < genres.length; i += 1) {
-          if (newBook.genre.indexOf(genres[i].id) > -1) {
-            genres[i].checked = 'true';
-          }
-        }
+    // mark our selected genres as checked.
+    for (let i = 0; i < genreList.length; i += 1) {
+      if (newBook.genre.indexOf(genreList[i].id) > -1) {
+        genreList[i].checked = 'true';
+      }
+    }
 
-        res.render('book_form', {
-          title: 'Create Book',
-          authors: authorList,
-          genres,
-          book: newBook,
-          errors: errors.array(),
-        });
-      })
-      .catch(next);
+    res.render('book_form', {
+      title: 'Create Book',
+      authors: authorList,
+      genres: genreList,
+      book: newBook,
+      errors: errors.array(),
+    });
   } else {
     newBook
       .save()
@@ -217,33 +205,27 @@ exports.processBookDeleteForm = (req, res, next) => {
   }
 };
 
-exports.renderBookUpdateForm = (req, res, next) => {
-  const { book, authorList } = res;
+exports.renderBookUpdateForm = (req, res) => {
+  const { book, authorList, genreList } = res;
 
-  Genre
-    .find()
-    .exec()
-    .then((genres) => {
-      // mark our selected genres as checked.
-      for (let i = 0; i < genres.length; i += 1) {
-        for (let j = 0; j < book.genre.length; j += 1) {
-          if (genres[i].id.toString() === book.genre[j].id.toString()) {
-            genres[i].checked = 'true';
-          }
-        }
+  // mark our selected genres as checked.
+  for (let i = 0; i < genreList.length; i += 1) {
+    for (let j = 0; j < book.genre.length; j += 1) {
+      if (genreList[i].id.toString() === book.genre[j].id.toString()) {
+        genreList[i].checked = 'true';
       }
-      res.render('book_form', {
-        title: 'Update Book',
-        authors: authorList,
-        genres,
-        book,
-      });
-    })
-    .catch(next);
+    }
+  }
+  res.render('book_form', {
+    title: 'Update Book',
+    authors: authorList,
+    genres: genreList,
+    book,
+  });
 };
 
 exports.processBookUpdateForm = (req, res, next) => {
-  const { book, authorList } = res;
+  const { book, authorList, genreList } = res;
   const errors = validationResult(req);
   const {
     title,
@@ -262,26 +244,20 @@ exports.processBookUpdateForm = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    Genre
-      .find()
-      .exec()
-      .then((genres) => {
-        // mark our selected genres as checked.
-        for (let i = 0; i < genres.length; i += 1) {
-          if (updatedBook.genre.indexOf(genres[i].id) > -1) {
-            genres[i].checked = 'true';
-          }
-        }
+    // mark our selected genres as checked.
+    for (let i = 0; i < genreList.length; i += 1) {
+      if (updatedBook.genre.indexOf(genreList[i].id) > -1) {
+        genreList[i].checked = 'true';
+      }
+    }
 
-        res.render('book_form', {
-          title: 'Update Book',
-          authors: authorList,
-          genres,
-          book: updatedBook,
-          errors: errors.array(),
-        });
-      })
-      .catch(next);
+    res.render('book_form', {
+      title: 'Update Book',
+      authors: authorList,
+      genres: genreList,
+      book: updatedBook,
+      errors: errors.array(),
+    });
   } else {
     Book
       .findByIdAndUpdate(book.id, updatedBook)
