@@ -158,12 +158,12 @@ exports.renderAuthorDeletePost = (req, res, next) => {
   }
 };
 
-exports.author_update_get = (req, res) => {
+exports.renderAuthorUpdateGet = (req, res) => {
   const { author } = res;
   res.render('author_form', { title: 'Update Author', author });
 };
 
-exports.author_update_post = [
+exports.renderAuthorUpdatePost = [
   body('first_name')
     .isLength({ min: 1 })
     .trim()

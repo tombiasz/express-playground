@@ -21,7 +21,7 @@ router
 
 router
   .route('/:id/update')
-  .get(authorController.author_update_get)
-  .post(authorController.author_update_post);
+  .get(authorController.renderAuthorUpdateGet)
+  .post(authorController.renderAuthorUpdatePost);
 
 module.exports = router;
