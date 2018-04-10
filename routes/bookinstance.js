@@ -2,6 +2,7 @@ const express = require('express');
 
 const bookinstanceController = require('../controllers/bookinstanceController');
 const {
+  renderBookInstanceDeleteForm,
   renderBookInstanceDetail,
   renderBookInstanceCreateForm,
 
@@ -20,7 +21,7 @@ router.get('/:id', renderBookInstanceDetail);
 
 router
   .route('/:id/delete')
-  .get(bookinstanceController.bookinstance_delete_get)
+  .get(renderBookInstanceDeleteForm)
   .post(bookinstanceController.bookinstance_delete_post);
 
 router

@@ -114,7 +114,7 @@ exports.processBookInstanceCreateForm = [
   },
 ];
 
-exports.bookinstance_delete_get = (req, res, next) => {
+exports.renderBookInstanceDeleteForm = (req, res, next) => {
   const { id } = req.params;
 
   BookInstance
