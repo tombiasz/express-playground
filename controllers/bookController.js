@@ -287,7 +287,13 @@ exports.processBookUpdateForm = (req, res, next) => {
           }
         }
 
-        res.render('book_form', { title: 'Update Book', authors, genres, book, errors: errors.array() });
+        res.render('book_form', {
+          title: 'Update Book',
+          authors,
+          genres,
+          book,
+          errors: errors.array(),
+        });
       })
       .catch(next);
   } else {
