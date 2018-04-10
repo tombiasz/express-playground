@@ -70,22 +70,17 @@ exports.renderBookList = (req, res, next) => {
 };
 
 exports.renderBookDetail = (req, res, next) => {
-  const { id } = req.params;
-  Promise
-    .all([
-      Book.findById(id).populate('author').populate('genre').exec(),
-      BookInstance.find({ book: id }).exec(),
-    ])
-    .then((results) => {
-      const [book, book_instances] = results;
+  const { book } = res;
 
-      if (book === null) {
-        const err = new Error('Book not found');
-        err.status = 404;
-        return next(err);
-      }
-
-      res.render('book_detail', { title: 'Title', book, book_instances });
+  BookInstance
+    .find({ book: book.id })
+    .exec()
+    .then((bookInstance) => {
+      res.render('book_detail', {
+        title: 'Title',
+        book,
+        book_instances: bookInstance,
+      });
     })
     .catch(next);
 };
