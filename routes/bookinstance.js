@@ -1,6 +1,5 @@
 const express = require('express');
 
-const bookinstanceController = require('../controllers/bookinstanceController');
 const {
   renderBookInstanceDeleteForm,
   renderBookInstanceDetail,
@@ -9,6 +8,7 @@ const {
 
   processBookInstanceCreateForm,
   processBookInstanceDeleteForm,
+  processBookInstanceUpdateForm,
 } = require('../controllers/bookinstanceController');
 
 
@@ -29,6 +29,6 @@ router
 router
   .route('/:id/update')
   .get(renderBookInstanceUpdateForm)
-  .post(bookinstanceController.bookinstance_update_post);
+  .post(processBookInstanceUpdateForm);
 
 module.exports = router;

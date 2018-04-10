@@ -165,7 +165,7 @@ exports.renderBookInstanceUpdateForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.bookinstance_update_post = [
+exports.processBookInstanceUpdateForm = [
   body('book', 'Book must be specified')
     .isLength({ min: 1 })
     .trim(),
