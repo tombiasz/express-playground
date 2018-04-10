@@ -22,15 +22,24 @@ exports.getAuthorById = (req, res, next) => {
     .catch(next);
 };
 
-exports.author_list = (req, res, next) => {
+exports.getAllAuthors = (req, res, next) => {
   Author
     .find()
     .sort([['family_name', 'ascending']])
     .exec()
-    .then((author_list) => {
-      res.render('author_list', { title: 'Author List', author_list });
+    .then((authorList) => {
+      res.authorList = authorList;
+      next();
     })
     .catch(next);
+};
+
+exports.renderAuthorList = (req, res) => {
+  const { authorList } = res;
+  res.render('author_list', {
+    title: 'Author List',
+    author_list: authorList,
+  });
 };
 
 exports.author_detail = (req, res, next) => {
