@@ -1,16 +1,18 @@
-
 const express = require('express');
 
 const {
-  createAuthorOrRedirect,
   getAuthorBooks,
   getAuthorById,
-  renderAuthorCreateGet,
-  renderAuthorDeleteGet,
-  renderAuthorDeletePost,
+
+  processAuthorCreateForm,
+  processAuthorUpdateForm,
+  processAuthorDeleteForm,
+
+  renderAuthorCreateForm,
+  renderAuthorDeleteForm,
   renderAuthorDetail,
-  renderAuthorUpdateGet,
-  updateAuthorOrRedirect,
+  renderAuthorUpdateForm,
+
   validateAuthorForm,
 } = require('../controllers/authorController');
 
@@ -21,20 +23,20 @@ router.param('id', getAuthorById);
 
 router
   .route('/create')
-  .get(renderAuthorCreateGet)
-  .post(validateAuthorForm, createAuthorOrRedirect);
+  .get(renderAuthorCreateForm)
+  .post(validateAuthorForm, processAuthorCreateForm);
 
 router.get('/:id', getAuthorBooks, renderAuthorDetail);
 
 router
   .route('/:id/delete')
   .all(getAuthorBooks)
-  .get(renderAuthorDeleteGet)
-  .post(renderAuthorDeletePost);
+  .get(renderAuthorDeleteForm)
+  .post(processAuthorDeleteForm);
 
 router
   .route('/:id/update')
-  .get(renderAuthorUpdateGet)
-  .post(validateAuthorForm, updateAuthorOrRedirect);
+  .get(renderAuthorUpdateForm)
+  .post(validateAuthorForm, processAuthorUpdateForm);
 
 module.exports = router;

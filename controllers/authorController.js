@@ -63,7 +63,7 @@ exports.renderAuthorDetail = (req, res) => {
   });
 };
 
-exports.renderAuthorCreateGet = (req, res) => {
+exports.renderAuthorCreateForm = (req, res) => {
   res.render('author_form', { title: 'Create Author' });
 };
 
@@ -104,7 +104,7 @@ exports.validateAuthorForm = [
     .toDate(),
 ];
 
-exports.updateAuthorOrRedirect = (req, res, next) => {
+exports.processAuthorUpdateForm = (req, res, next) => {
   const { author } = res;
   const errors = validationResult(req);
 
@@ -137,7 +137,7 @@ exports.updateAuthorOrRedirect = (req, res, next) => {
   }
 };
 
-exports.createAuthorOrRedirect = (req, res, next) => {
+exports.processAuthorCreateForm = (req, res, next) => {
   const errors = validationResult(req);
   const {
     first_name,
@@ -145,7 +145,7 @@ exports.createAuthorOrRedirect = (req, res, next) => {
     date_of_birth,
     date_of_death,
   } = req.body;
-  const author = new Author({
+  const newAuthor = new Author({
     first_name,
     family_name,
     date_of_birth,
@@ -153,16 +153,20 @@ exports.createAuthorOrRedirect = (req, res, next) => {
   });
 
   if (!errors.isEmpty()) {
-    res.render('author_form', { title: 'Create Author', author, errors: errors.array() });
+    res.render('author_form', {
+      title: 'Create Author',
+      author: newAuthor,
+      errors: errors.array(),
+    });
   } else {
-    author
+    newAuthor
       .save()
-      .then(() => res.redirect(author.url))
+      .then(() => res.redirect(newAuthor.url))
       .catch(next);
   }
 };
 
-exports.renderAuthorDeleteGet = (req, res) => {
+exports.renderAuthorDeleteForm = (req, res) => {
   const { author, authorBooks } = res;
   res.render('author_delete', {
     title: 'Delete Author',
@@ -171,7 +175,7 @@ exports.renderAuthorDeleteGet = (req, res) => {
   });
 };
 
-exports.renderAuthorDeletePost = (req, res, next) => {
+exports.processAuthorDeleteForm = (req, res, next) => {
   const { author, authorBooks } = res;
 
   if (authorBooks.length > 0) {
@@ -191,7 +195,7 @@ exports.renderAuthorDeletePost = (req, res, next) => {
   }
 };
 
-exports.renderAuthorUpdateGet = (req, res) => {
+exports.renderAuthorUpdateForm = (req, res) => {
   const { author } = res;
   res.render('author_form', { title: 'Update Author', author });
 };
