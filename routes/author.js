@@ -1,3 +1,4 @@
+
 const express = require('express');
 
 const {
@@ -10,6 +11,9 @@ const {
   renderAuthorDetail,
   renderAuthorUpdateGet,
   renderAuthorUpdatePost,
+
+  validateAuthorForm,
+  updateAuthorOrRedirect,
 } = require('../controllers/authorController');
 
 
@@ -32,6 +36,6 @@ router
 router
   .route('/:id/update')
   .get(renderAuthorUpdateGet)
-  .post(renderAuthorUpdatePost);
+  .post(validateAuthorForm, updateAuthorOrRedirect);
 
 module.exports = router;
