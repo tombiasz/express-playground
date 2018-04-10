@@ -134,10 +134,10 @@ exports.renderBookInstanceDeleteForm = (req, res) => {
 };
 
 exports.processBookInstanceDeleteForm = (req, res, next) => {
-  const { id } = req.params;
+  const { bookinstance } = res;
 
   BookInstance
-    .findByIdAndRemove(id)
+    .findByIdAndRemove(bookinstance.id)
     .exec()
     .then(() => res.redirect('/catalog/bookinstances'))
     .catch(next);
