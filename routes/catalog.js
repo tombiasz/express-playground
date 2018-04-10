@@ -25,6 +25,6 @@ router.use('/genre', genreRouter);
 router.get('/genres', genreController.genre_list);
 
 router.use('/bookinstance', bookinstanceRouter);
-router.get('/bookinstances', bookinstanceController.bookinstance_list);
+router.get('/bookinstances', bookinstanceController.renderBookInstanceList);
 
 module.exports = router;

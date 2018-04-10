@@ -5,7 +5,7 @@ const Book = require('../models/book');
 const BookInstance = require('../models/bookinstance');
 
 
-exports.bookinstance_list = (req, res, next) => {
+exports.renderBookInstanceList = (req, res, next) => {
   BookInstance.find()
     .populate('book')
     .exec()
