@@ -138,27 +138,24 @@ exports.renderAuthorDeleteGet = (req, res) => {
   });
 };
 
-exports.author_delete_post = (req, res, next) => {
-  const { id } = req.params;
-  const { author } = res;
+exports.renderAuthorDeletePost = (req, res, next) => {
+  const { author, authorBooks } = res;
 
-  Book
-    .find({ author: id })
-    .exec()
-    .then((author_books) => {
-      if (author_books.length > 0) {
-        res.render('author_delete', { title: 'Delete Author', author, author_books });
-      } else {
-        Author
-          .findByIdAndRemove(id)
-          .exec()
-          .then(() => {
-            res.redirect('/catalog/authors');
-          })
-          .catch(next);
-      }
-    })
-    .catch(next);
+  if (authorBooks.length > 0) {
+    res.render('author_delete', {
+      title: 'Delete Author',
+      author,
+      author_books: authorBooks,
+    });
+  } else {
+    Author
+      .findByIdAndRemove(author.id)
+      .exec()
+      .then(() => {
+        res.redirect('/catalog/authors');
+      })
+      .catch(next);
+  }
 };
 
 exports.author_update_get = (req, res) => {

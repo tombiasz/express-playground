@@ -17,7 +17,7 @@ router.get('/:id', authorController.getAuthorBooks, authorController.renderAutho
 router
   .route('/:id/delete')
   .get(authorController.getAuthorBooks, authorController.renderAuthorDeleteGet)
-  .post(authorController.author_delete_post);
+  .post(authorController.getAuthorBooks, authorController.renderAuthorDeletePost);
 
 router
   .route('/:id/update')
