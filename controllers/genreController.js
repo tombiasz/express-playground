@@ -5,6 +5,18 @@ const Book = require('../models/book');
 const Genre = require('../models/genre');
 
 
+exports.getAllGenres = (req, res, next) => {
+  Genre
+    .find()
+    .sort([['name', 'ascending']])
+    .exec()
+    .then((genreList) => {
+      res.genreList = genreList;
+      next();
+    })
+    .catch(next);
+};
+
 exports.genre_list = (req, res, next) =>
   Genre
     .find()
