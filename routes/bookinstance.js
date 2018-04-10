@@ -35,6 +35,6 @@ router
 router
   .route('/:id/update')
   .get(renderBookInstanceUpdateForm)
-  .post(processBookInstanceUpdateForm);
+  .post(validateBookInstanceForm, processBookInstanceUpdateForm);
 
 module.exports = router;
