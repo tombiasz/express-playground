@@ -41,8 +41,11 @@ exports.renderBookList = (req, res, next) => {
     .find({}, 'title author')
     .populate('author')
     .exec()
-    .then((book_list) => {
-      res.render('book_list', { title: 'Book List', book_list });
+    .then((bookList) => {
+      res.render('book_list', {
+        title: 'Book List',
+        book_list: bookList,
+      });
     })
     .catch(next);
 };
