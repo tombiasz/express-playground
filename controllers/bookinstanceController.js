@@ -37,22 +37,13 @@ exports.renderBookInstanceList = (req, res, next) => {
     .catch(next);
 };
 
-exports.renderBookInstanceDetail = (req, res, next) => {
-  const { id } = req.params;
-  BookInstance
-    .findById(id)
-    .populate('book')
-    .exec()
-    .then((bookinstance) => {
-      if (bookinstance === null) {
-        const err = new Error('Book copy not found');
-        err.status = 404;
-        return next(err);
-      }
+exports.renderBookInstanceDetail = (req, res) => {
+  const { bookinstance } = res;
 
-      res.render('bookinstance_detail', { title: 'Book:', bookinstance });
-    })
-    .catch(next);
+  res.render('bookinstance_detail', {
+    title: 'Book:',
+    bookinstance,
+  });
 };
 
 exports.renderBookInstanceCreateForm = (req, res, next) => {
