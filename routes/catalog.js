@@ -15,7 +15,7 @@ const genreRouter = require('./genre');
 
 const router = express.Router();
 
-router.get('/', bookController.renderIndex);
+router.get('/', bookController.renderBookIndex);
 router.use('/book', bookRouter);
 router.get('/books', bookController.renderBookList);
 

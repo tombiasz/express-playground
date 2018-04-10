@@ -1,6 +1,5 @@
 const express = require('express');
 
-const bookController = require('../controllers/bookController');
 const {
   getBookById,
   getBookBookInstances,
@@ -9,6 +8,7 @@ const {
   renderBookDeleteForm,
   renderBookDetail,
   renderBookUpdateForm,
+  renderBookIndex,
 
   processBookCreateForm,
   processBookDeleteForm,
@@ -20,7 +20,7 @@ const {
 
 const router = express.Router();
 
-router.get('/', bookController.renderIndex);
+router.get('/', renderBookIndex);
 
 router.param('id', getBookById);
 

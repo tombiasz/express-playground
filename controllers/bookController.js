@@ -39,7 +39,7 @@ exports.getBookBookInstances = (req, res, next) => {
     .catch(next);
 };
 
-exports.renderIndex = (req, res, next) => {
+exports.renderBookIndex = (req, res, next) => {
   Promise
     .all([
       Book.count({}).exec(),
