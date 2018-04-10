@@ -200,20 +200,21 @@ exports.renderBookDeleteForm = (req, res, next) => {
 };
 
 exports.processBookDeleteForm = (req, res, next) => {
-  const { id } = req.params;
+  const { book } = res;
 
-  Promise
-    .all([
-      Book.findById(id).exec(),
-      BookInstance.find({ book: id }).exec(),
-    ])
-    .then((results) => {
-      const [book, book_instances] = results;
-      if (book_instances.length > 0) {
-        res.render('book_delete', { title: 'Delete Book', book, book_instances });
+  BookInstance
+    .find({ book: book.id })
+    .exec()
+    .then((bookInstances) => {
+      if (bookInstances.length > 0) {
+        res.render('book_delete', {
+          title: 'Delete Book',
+          book,
+          book_instances: bookInstances,
+        });
       } else {
         Book
-          .findByIdAndRemove(id)
+          .findByIdAndRemove(book.id)
           .exec()
           .then(() => res.redirect('/catalog/books'))
           .catch(next);
