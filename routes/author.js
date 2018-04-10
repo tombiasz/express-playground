@@ -1,27 +1,37 @@
 const express = require('express');
 
-const authorController = require('../controllers/authorController');
+const {
+  getAuthorBooks,
+  getAuthorById,
+  renderAuthorCreateGet,
+  renderAuthorCreatePost,
+  renderAuthorDeleteGet,
+  renderAuthorDeletePost,
+  renderAuthorDetail,
+  renderAuthorUpdateGet,
+  renderAuthorUpdatePost,
+} = require('../controllers/authorController');
 
 
 const router = express.Router();
 
-router.param('id', authorController.getAuthorById);
+router.param('id', getAuthorById);
 
 router
   .route('/create')
-  .get(authorController.renderAuthorCreateGet)
-  .post(authorController.renderAuthorCreatePost);
+  .get(renderAuthorCreateGet)
+  .post(renderAuthorCreatePost);
 
-router.get('/:id', authorController.getAuthorBooks, authorController.renderAuthorDetail);
+router.get('/:id', getAuthorBooks, renderAuthorDetail);
 
 router
   .route('/:id/delete')
-  .get(authorController.getAuthorBooks, authorController.renderAuthorDeleteGet)
-  .post(authorController.getAuthorBooks, authorController.renderAuthorDeletePost);
+  .get(getAuthorBooks, renderAuthorDeleteGet)
+  .post(getAuthorBooks, renderAuthorDeletePost);
 
 router
   .route('/:id/update')
-  .get(authorController.renderAuthorUpdateGet)
-  .post(authorController.renderAuthorUpdatePost);
+  .get(renderAuthorUpdateGet)
+  .post(renderAuthorUpdatePost);
 
 module.exports = router;
