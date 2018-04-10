@@ -1,6 +1,8 @@
 const express = require('express');
 
 const {
+  getBookInstanceById,
+
   renderBookInstanceDeleteForm,
   renderBookInstanceDetail,
   renderBookInstanceCreateForm,
@@ -13,6 +15,8 @@ const {
 
 
 const router = express.Router();
+
+router.param('id', getBookInstanceById);
 
 router
   .route('/create')

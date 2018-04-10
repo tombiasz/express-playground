@@ -1,9 +1,28 @@
 const { body, validationResult } = require('express-validator/check');
+const createError = require('http-errors');
 const { sanitizeBody } = require('express-validator/filter');
 
 const Book = require('../models/book');
 const BookInstance = require('../models/bookinstance');
 
+
+exports.getBookInstanceById = (req, res, next) => {
+  const { id } = req.params;
+
+  BookInstance
+    .findById(id)
+    .populate('book')
+    .exec()
+    .then((bookinstance) => {
+      if (!bookinstance) {
+        next(createError(404, 'BookInstance not found'));
+      } else {
+        res.bookinstance = bookinstance;
+        next();
+      }
+    })
+    .catch(next);
+};
 
 exports.renderBookInstanceList = (req, res, next) => {
   BookInstance.find()
