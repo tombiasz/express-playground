@@ -4,6 +4,8 @@ const bookinstanceController = require('../controllers/bookinstanceController');
 const {
   renderBookInstanceDetail,
   renderBookInstanceCreateForm,
+
+  processBookInstanceCreateForm,
 } = require('../controllers/bookinstanceController');
 
 
@@ -12,7 +14,7 @@ const router = express.Router();
 router
   .route('/create')
   .get(renderBookInstanceCreateForm)
-  .post(bookinstanceController.bookinstance_create_post);
+  .post(processBookInstanceCreateForm);
 
 router.get('/:id', renderBookInstanceDetail);
 

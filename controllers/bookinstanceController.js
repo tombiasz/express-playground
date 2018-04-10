@@ -49,7 +49,7 @@ exports.renderBookInstanceCreateForm = (req, res, next) => {
     .catch(next);
 };
 
-exports.bookinstance_create_post = [
+exports.processBookInstanceCreateForm = [
   body('book', 'Book must be specified')
     .isLength({ min: 1 })
     .trim(),
