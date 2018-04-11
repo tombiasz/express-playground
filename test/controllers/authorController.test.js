@@ -69,4 +69,42 @@ describe('Author controller', () => {
       });
     });
   });
+
+  describe('renderAuthorList', () => {
+    beforeEach((done) => {
+      this.req = httpMocks.createRequest();
+      this.res = httpMocks.createResponse();
+      done();
+    });
+
+    it('should render author_list view file', (done) => {
+      const { res, req } = this;
+      authorController.renderAuthorList(req, res);
+      expect(res._getRenderView()).to.equal('author_list');
+      done();
+    });
+
+    it('should pass title variable to view file', (done) => {
+      const { res, req } = this;
+
+      authorController.renderAuthorList(req, res);
+
+      const locals = res._getRenderData();
+      expect(locals).to.have.property('title');
+      expect(locals.title).to.equal('Author List');
+      done();
+    });
+
+    it('should pass response attribute authorList to view file as author_list variable', (done) => {
+      const { res, req } = this;
+
+      res.authorList = [1, 2];
+      authorController.renderAuthorList(req, res);
+
+      const locals = res._getRenderData();
+      expect(locals).to.have.property('author_list');
+      expect(locals.author_list).to.equal(res.authorList);
+      done();
+    });
+  });
 });
