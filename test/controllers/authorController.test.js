@@ -63,14 +63,14 @@ describe('Author controller', () => {
       .catch(done);
   });
 
-  describe('getAuthorById', () => {
-    beforeEach((done) => {
-      this.req = httpMocks.createRequest();
-      this.res = httpMocks.createResponse();
-      this.next = sinon.spy();
-      done();
-    });
+  beforeEach((done) => {
+    this.req = httpMocks.createRequest();
+    this.res = httpMocks.createResponse();
+    this.next = sinon.spy();
+    done();
+  });
 
+  describe('getAuthorById', () => {
     it('should set author property on response object based on passed id parameter', (done) => {
       const { res, req, next, author1 } = this;
 
@@ -102,13 +102,6 @@ describe('Author controller', () => {
   });
 
   describe('getAllAuthors', () => {
-    beforeEach((done) => {
-      this.req = httpMocks.createRequest();
-      this.res = httpMocks.createResponse();
-      this.next = sinon.spy();
-      done();
-    });
-
     it('should set authorList property on response object', (done) => {
       const { req, res, next } = this;
       authorController
@@ -183,12 +176,6 @@ describe('Author controller', () => {
   });
 
   describe('getAuthorBooks', () => {
-    beforeEach((done) => {
-      this.req = httpMocks.createRequest();
-      this.res = httpMocks.createResponse();
-      done();
-    });
-
     it('should set authorBooks property on response object', (done) => {
       const { author1, req, res, next } = this;
 
@@ -273,12 +260,6 @@ describe('Author controller', () => {
   });
 
   describe('renderAuthorList', () => {
-    beforeEach((done) => {
-      this.req = httpMocks.createRequest();
-      this.res = httpMocks.createResponse();
-      done();
-    });
-
     it('should render author_list view file', (done) => {
       const { res, req } = this;
       authorController.renderAuthorList(req, res);
