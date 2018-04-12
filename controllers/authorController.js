@@ -23,7 +23,7 @@ exports.getAuthorById = (req, res, next) => {
 };
 
 exports.getAllAuthors = (req, res, next) => {
-  Author
+  return Author
     .find()
     .sort([['family_name', 'ascending']])
     .exec()
