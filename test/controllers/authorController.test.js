@@ -2,11 +2,13 @@ const chai = require('chai');
 const httpMocks = require('node-mocks-http');
 const mocha = require('mocha');
 const sinon = require('sinon');
+const { validationResult } = require('express-validator/check');
 
 const Author = require('../../models/author');
 const Book = require('../../models/book');
 const authorController = require('../../controllers/authorController');
-const dbUtils = require('../../utils/db.js');
+const dbUtils = require('../../utils/db');
+const testUtils = require('../../utils/test');
 
 
 const { expect } = chai;
@@ -352,6 +354,325 @@ describe('Author controller', () => {
       expect(locals).to.have.property('title');
       expect(locals.title).to.equal('Create Author');
       done();
+    });
+  });
+
+  describe('validateAuthorForm', () => {
+    it('should verify if first_name was provided', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        first_name: null,
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { first_name } = errors.mapped();
+          expect(first_name.msg).to.equal('First name must be specified.');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if first_name has only alphanumeric characters', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        first_name: 'name with space',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { first_name } = errors.mapped();
+          expect(first_name.msg).to.equal('First name has non-alphanumeric characters.');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if valid first_name will not rise validation error', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        first_name: 'propername',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { first_name } = errors.mapped();
+          expect(first_name).to.equal(undefined);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if family_name was provided', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        family_name: null,
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { family_name } = errors.mapped();
+          expect(family_name.msg).to.equal('Family name must be specified.');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if family_name has only alphanumeric characters', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        family_name: 'name with space',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { family_name } = errors.mapped();
+          expect(family_name.msg).to.equal('Family name has non-alphanumeric characters.');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if valid family_name will not rise validation error', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        family_name: 'propername',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { family_name } = errors.mapped();
+          expect(family_name).to.equal(undefined);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if date_of_birth can be null', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_birth: null,
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { date_of_birth } = errors.mapped();
+          expect(date_of_birth).to.equal(undefined);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if valid date_of_birth will not rise validation error', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_birth: '1922-01-22',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { date_of_birth } = errors.mapped();
+          expect(date_of_birth).to.equal(undefined);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if invalid date_of_birth will rise validation error', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_birth: '1922-61-22',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { date_of_birth } = errors.mapped();
+          expect(date_of_birth.msg).to.equal('Invalid date of birth');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if date_of_death can be null', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_death: null,
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { date_of_death } = errors.mapped();
+          expect(date_of_death).to.equal(undefined);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if valid date_of_death will not rise validation error', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_death: '1922-01-22',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { date_of_death } = errors.mapped();
+          expect(date_of_death).to.equal(undefined);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if invalid date_of_death will rise validation error', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_death: '1922-61-22',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const errors = validationResult(req);
+          const { date_of_death } = errors.mapped();
+          expect(date_of_death.msg).to.equal('Invalid date of death');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if first_name will be trimmed', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        first_name: '     name      ',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          expect(req.body.first_name).to.equal('name');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if first_name will be escaped', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        first_name: 'name<script>alert(1)</script>',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const actual = req.body.first_name;
+          const expected = 'name&lt;script&gt;alert(1)&lt;&#x2F;script&gt;';
+          expect(actual).to.equal(expected);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if family_name will be trimmed', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        family_name: '     name      ',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          expect(req.body.family_name).to.equal('name');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if family_name will be escaped', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        family_name: 'name<script>alert(1)</script>',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const { family_name } = req.body;
+          expect(family_name).to.equal('name&lt;script&gt;alert(1)&lt;&#x2F;script&gt;');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if date_of_birth will be cast to Date', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_birth: '1925-01-23',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const { date_of_birth } = req.body;
+          expect(date_of_birth instanceof Date).to.be.true;
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should verify if date_of_death will be cast to Date', (done) => {
+      const { res, req, next } = this;
+      const formData = {
+        date_of_death: '1925-01-23',
+      };
+
+      req.body = formData;
+      testUtils
+        .testExpressValidatorArrayMiddleware(req, res, next, authorController.validateAuthorForm)
+        .then(() => {
+          const { date_of_death } = req.body;
+          expect(date_of_death instanceof Date).to.be.true;
+          done();
+        })
+        .catch(done);
     });
   });
 });
