@@ -334,4 +334,24 @@ describe('Author controller', () => {
       done();
     });
   });
+
+  describe('renderAuthorCreateForm', () => {
+    it('should render author_form view file', (done) => {
+      const { res, req } = this;
+      authorController.renderAuthorCreateForm(req, res);
+      expect(res._getRenderView()).to.equal('author_form');
+      done();
+    });
+
+    it('should pass title variable to view file', (done) => {
+      const { res, req } = this;
+
+      authorController.renderAuthorCreateForm(req, res);
+
+      const locals = res._getRenderData();
+      expect(locals).to.have.property('title');
+      expect(locals.title).to.equal('Create Author');
+      done();
+    });
+  });
 });
