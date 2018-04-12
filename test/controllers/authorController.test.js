@@ -35,7 +35,8 @@ describe('Author controller', () => {
       .then((results) => {
         this.authors = results;
         done();
-      });
+      })
+      .catch(done);
   });
 
   describe('getAuthorById', () => {
