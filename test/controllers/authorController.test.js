@@ -51,25 +51,29 @@ describe('Author controller', () => {
       const { res, req, next, author1 } = this;
 
       req.params.id = author1.id;
-      authorController.getAuthorById(req, res, next).then(() => {
-        expect(res.author.id).to.equal(author1.id);
-        expect(next.calledWithExactly()).to.be.true;
-        done();
-      });
+      authorController
+        .getAuthorById(req, res, next)
+        .then(() => {
+          expect(res.author.id).to.equal(author1.id);
+          expect(next.calledWithExactly()).to.be.true;
+          done();
+        });
     });
 
     it('should call next with 404 error when author was not found', (done) => {
       const { res, req, next } = this;
 
       req.params.id = '507f1f77bcf86cd799439011';
-      authorController.getAuthorById(req, res, next).then(() => {
-        const [httpError] = next.firstCall.args;
-        expect(httpError.status).to.equal(404);
-        expect(httpError.message).to.equal('Author not found');
-        done();
+      authorController
+        .getAuthorById(req, res, next)
+        .then(() => {
+          const [httpError] = next.firstCall.args;
+          expect(httpError.status).to.equal(404);
+          expect(httpError.message).to.equal('Author not found');
+          done();
+        })
       });
     });
-  });
 
   describe('getAllAuthors', () => {
     beforeEach((done) => {
