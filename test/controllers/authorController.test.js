@@ -290,4 +290,48 @@ describe('Author controller', () => {
       done();
     });
   });
+
+  describe('renderAuthoDetail', () => {
+    it('should render author_detail view file', (done) => {
+      const { res, req } = this;
+      authorController.renderAuthorDetail(req, res);
+      expect(res._getRenderView()).to.equal('author_detail');
+      done();
+    });
+
+    it('should pass title variable to view file', (done) => {
+      const { res, req } = this;
+
+      authorController.renderAuthorDetail(req, res);
+
+      const locals = res._getRenderData();
+      expect(locals).to.have.property('title');
+      expect(locals.title).to.equal('Author Detail');
+      done();
+    });
+
+    it('should pass response attribute author to view file as author variable', (done) => {
+      const { res, req } = this;
+
+      res.author = 'test';
+      authorController.renderAuthorDetail(req, res);
+
+      const locals = res._getRenderData();
+      expect(locals).to.have.property('author');
+      expect(locals.author).to.equal(res.author);
+      done();
+    });
+
+    it('should pass response attribute authorBooks to view file as author_books variable', (done) => {
+      const { res, req } = this;
+
+      res.authorBooks = [1, 2];
+      authorController.renderAuthorDetail(req, res);
+
+      const locals = res._getRenderData();
+      expect(locals).to.have.property('author_books');
+      expect(locals.author_books).to.equal(res.authorBooks);
+      done();
+    });
+  });
 });
