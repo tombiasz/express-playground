@@ -57,7 +57,8 @@ describe('Author controller', () => {
           expect(res.author.id).to.equal(author1.id);
           expect(next.calledWithExactly()).to.be.true;
           done();
-        });
+        })
+        .catch(done);
     });
 
     it('should call next with 404 error when author was not found', (done) => {
@@ -72,8 +73,9 @@ describe('Author controller', () => {
           expect(httpError.message).to.equal('Author not found');
           done();
         })
-      });
+        .catch(done);
     });
+  });
 
   describe('getAllAuthors', () => {
     beforeEach((done) => {
