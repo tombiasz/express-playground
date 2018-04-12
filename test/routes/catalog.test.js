@@ -29,27 +29,27 @@ describe('Book routes', () => {
           name: 'Genre',
         });
 
-        Promise
+        return Promise
           .all([
             author.save(),
             genre.save(),
-          ])
-          .then((results) => {
-            const [theAuthor, theGenre] = results;
+          ]);
+      })
+      .then((results) => {
+        const [savedAuthor, savedGenre] = results;
+        const book = new Book({
+          title: 'The Title',
+          author: savedAuthor.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [savedGenre.id],
+        });
 
-            this.book = new Book({
-              title: 'The Title',
-              author: theAuthor.id,
-              summary: 'Summary',
-              isbn: '123456789',
-              genre: [theGenre.id],
-            });
-
-            this.book.save((err) => {
-              if (err) { throw new Error(err); }
-              done();
-            });
-          });
+        return book.save();
+      })
+      .then((savedBook) => {
+        this.book = savedBook;
+        done();
       });
   });
 
@@ -170,16 +170,18 @@ describe('Author routes', () => {
     dbUtils
       .dropAllCollections()
       .then(() => {
-        this.author = new Author({
+        const author = new Author({
           first_name: 'John',
           family_name: 'Doe',
           date_of_birth: null,
           date_of_death: null,
         });
-        this.author.save((err) => {
-          if (err) { throw new Error(err); }
-          done();
-        });
+
+        return author.save();
+      })
+      .then((savedAuthor) => {
+        this.author = savedAuthor;
+        done();
       });
   });
 
@@ -288,13 +290,15 @@ describe('Genre routes', () => {
     dbUtils
       .dropAllCollections()
       .then(() => {
-        this.genre = new Genre({
+        const genre = new Genre({
           name: 'Genre',
         });
-        this.genre.save((err) => {
-          if (err) { throw new Error(err); }
-          done();
-        });
+
+        return genre.save();
+      })
+      .then((savedGenre) => {
+        this.genre = savedGenre;
+        done();
       });
   });
 
@@ -413,35 +417,35 @@ describe('BookInstance routes', () => {
           name: 'Genre',
         });
 
-        Promise
+        return Promise
           .all([
             author.save(),
             genre.save(),
-          ])
-          .then((results) => {
-            const [theAuthor, theGenre] = results;
-            const book = new Book({
-              title: 'The Title',
-              author: theAuthor.id,
-              summary: 'Summary',
-              isbn: '123456789',
-              genre: [theGenre.id],
-            });
+          ]);
+      })
+      .then((results) => {
+        const [savedAuthor, savedGenre] = results;
+        const book = new Book({
+          title: 'The Title',
+          author: savedAuthor.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [savedGenre.id],
+        });
 
-            book.save((err) => {
-              if (err) { throw new Error(err); }
+        return book.save();
+      })
+      .then((savedBook) => {
+        const bookinstance = new BookInstance({
+          book: savedBook.id,
+          imprint: 'Imprint',
+        });
 
-              this.bookinstance = new BookInstance({
-                book: book.id,
-                imprint: 'Imprint',
-              });
-
-              this.bookinstance.save((err) => {
-                if (err) { throw new Error(err); }
-                done();
-              });
-            });
-          });
+        return bookinstance.save();
+      })
+      .then((savedBookInstance) => {
+        this.bookinstance = savedBookInstance;
+        done();
       });
   });
 

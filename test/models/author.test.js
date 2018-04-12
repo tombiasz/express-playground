@@ -16,16 +16,18 @@ describe('Author model', () => {
       .then(() => {
         const today = new Date();
 
-        this.author = new Author({
+        const author = new Author({
           first_name: 'John',
           family_name: 'Doe',
           date_of_birth: today.getDate() - 7,
           date_of_death: today.getDate() + 7,
         });
-        this.author.save((err) => {
-          if (err) { throw new Error(err); }
-          done();
-        });
+
+        return author.save();
+      })
+      .then((savedAuthor) => {
+        this.author = savedAuthor;
+        done();
       });
   });
 

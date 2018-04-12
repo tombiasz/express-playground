@@ -13,14 +13,15 @@ describe('Genre model', () => {
     dbUtils
       .dropAllCollections()
       .then(() => {
-        this.genre = new Genre({
+        const genre = new Genre({
           name: 'Genre',
         });
 
-        this.genre.save((err) => {
-          if (err) { throw new Error(err); }
-          done();
-        });
+        return genre.save();
+      })
+      .then((savedGenre) => {
+        this.genre = savedGenre;
+        done();
       });
   });
 

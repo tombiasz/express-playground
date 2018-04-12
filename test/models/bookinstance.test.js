@@ -23,31 +23,30 @@ describe('BookInstance model', () => {
           family_name: 'Doe',
         });
 
-        author.save((err) => {
-          if (err) { throw new Error(err); }
-
-          const book = new Book({
-            title: 'The Title',
-            author: author.id,
-            summary: 'Summary',
-            isbn: '123456789',
-            genre: [],
-          });
-
-          book.save((err) => {
-            if (err) { throw new Error(err); }
-
-            this.bookinstance = new BookInstance({
-              book: book.id,
-              imprint: 'Imprint',
-            });
-            this.bookinstance.save((err) => {
-              if (err) { throw new Error(err); }
-
-              done();
-            });
-          });
+        return author.save();
+      })
+      .then((savedAuthor) => {
+        const book = new Book({
+          title: 'The Title',
+          author: savedAuthor.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [],
         });
+
+        return book.save();
+      })
+      .then((savedBook) => {
+        const bookinstance = new BookInstance({
+          book: savedBook.id,
+          imprint: 'Imprint',
+        });
+
+        return bookinstance.save();
+      })
+      .then((savedBookInstance) => {
+        this.bookinstance = savedBookInstance;
+        done();
       });
   });
 

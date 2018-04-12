@@ -22,22 +22,22 @@ describe('Book model', () => {
           family_name: 'Doe',
         });
 
-        author.save((err) => {
-          if (err) { throw new Error(err); }
-
-          this.book = new Book({
-            title: 'The Title',
-            author: author.id,
-            summary: 'Summary',
-            isbn: '123456789',
-            genre: [],
-          });
-
-          this.book.save((err) => {
-            if (err) { throw new Error(err); }
-            done();
-          });
+        return author.save();
+      })
+      .then((savedAuthor) => {
+        const book = new Book({
+          title: 'The Title',
+          author: savedAuthor.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [],
         });
+
+        return book.save();
+      })
+      .then((savedBook) => {
+        this.book = savedBook;
+        done();
       });
   });
 
