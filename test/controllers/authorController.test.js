@@ -23,7 +23,7 @@ describe('Author controller', () => {
         });
         this.author2 = new Author({
           first_name: 'Jane',
-          family_name: 'Doe',
+          family_name: 'Daniels',
         });
 
         return Promise
@@ -67,6 +67,87 @@ describe('Author controller', () => {
         expect(httpError.message).to.equal('Author not found');
         done();
       });
+    });
+  });
+
+  describe('getAllAuthors', () => {
+    beforeEach((done) => {
+      this.req = httpMocks.createRequest();
+      this.res = httpMocks.createResponse();
+      this.next = sinon.spy();
+      done();
+    });
+
+    it('should set authorList property on response object', (done) => {
+      const { req, res, next } = this;
+      authorController
+        .getAllAuthors(req, res, next)
+        .then(() => {
+          expect(res).to.have.property('authorList');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorList be an array of Author objects', (done) => {
+      const { req, res, next } = this;
+      authorController
+        .getAllAuthors(req, res, next)
+        .then(() => {
+          const obj = res.authorList.pop();
+          expect(res.authorList).to.be.a('array');
+          expect(obj.constructor.modelName).to.equal('Author');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorList contain all authors', (done) => {
+      const { author1, author2, req, res, next } = this;
+      authorController
+        .getAllAuthors(req, res, next)
+        .then(() => {
+          const foundIds = res.authorList.map(obj => obj.id);
+
+          expect(res.authorList.length).to.equal(2);
+          expect(foundIds).to.include(author1.id);
+          expect(foundIds).to.include(author2.id);
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorList have elements sorted in ascending order by family_name', (done) => {
+      const { author1, author2, req, res, next } = this;
+      authorController
+        .getAllAuthors(req, res, next)
+        .then(() => {
+          const authors = [author1, author2];
+          const getFamilyName = obj => obj.family_name;
+          const actual = res.authorList.map(getFamilyName);
+          const expected = authors.map(getFamilyName);
+
+          expect(actual).to.deep.equal(expected.sort());
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorList be an empty array when there are no authors', (done) => {
+      const { authors, req, res, next } = this;
+
+      Author
+        .remove()
+        .exec()
+        .then(() => authorController.getAllAuthors(req, res, next))
+        .then(() => {
+          expect(res.authorList).to.be.a('array');
+          expect(res.authorList).to.be.empty;
+          return Promise.resolve();
+        })
+        .then(() => Author.insertMany(authors))
+        .then(() => done())
+        .catch(done);
     });
   });
 
