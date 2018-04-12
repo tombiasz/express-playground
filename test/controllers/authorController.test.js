@@ -4,6 +4,7 @@ const mocha = require('mocha');
 const sinon = require('sinon');
 
 const Author = require('../../models/author');
+const Book = require('../../models/book');
 const authorController = require('../../controllers/authorController');
 const dbUtils = require('../../utils/db.js');
 
@@ -32,8 +33,31 @@ describe('Author controller', () => {
             this.author2.save(),
           ]);
       })
-      .then((results) => {
-        this.authors = results;
+      .then((savedAuthors) => {
+        this.authors = savedAuthors;
+
+        const book1 = new Book({
+          title: 'Book 1',
+          author: this.author1.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [],
+        });
+        const book2 = new Book({
+          title: 'Book 2',
+          author: this.author1.id,
+          summary: 'Summary',
+          isbn: '123456789',
+          genre: [],
+        });
+
+        return Promise
+          .all([
+            book1.save(),
+            book2.save(),
+          ]);
+      })
+      .then(() => {
         done();
       })
       .catch(done);
@@ -154,6 +178,96 @@ describe('Author controller', () => {
         })
         .then(() => Author.insertMany(authors))
         .then(() => done())
+        .catch(done);
+    });
+  });
+
+  describe('getAuthorBooks', () => {
+    beforeEach((done) => {
+      this.req = httpMocks.createRequest();
+      this.res = httpMocks.createResponse();
+      done();
+    });
+
+    it('should set authorBooks property on response object', (done) => {
+      const { author1, req, res, next } = this;
+
+      res.author = author1;
+      authorController
+        .getAuthorBooks(req, res, next)
+        .then(() => {
+          expect(res).to.have.property('authorBooks');
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorBooks be an array of Book objects', (done) => {
+      const { author1, req, res, next } = this;
+
+      res.author = author1;
+      authorController
+        .getAuthorBooks(req, res, next)
+        .then(() => {
+          const { authorBooks } = res;
+          expect(authorBooks).to.be.a('array');
+
+          const getModelName = obj => obj.constructor.modelName;
+          const models = authorBooks.map(getModelName);
+          models.forEach(obj => expect(obj).to.equal('Book'));
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorBooks container books by same author', (done) => {
+      const { author1, req, res, next } = this;
+
+      res.author = author1;
+      authorController
+        .getAuthorBooks(req, res, next )
+        .then(() => {
+          const { authorBooks } = res;
+          expect(authorBooks).to.be.a('array');
+
+          const getAuthorId = obj => obj.author.toString();
+          const authors = authorBooks.map(getAuthorId);
+          authors.forEach(obj => expect(obj).to.equal(res.author.id));
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorBooks container books by same author', (done) => {
+      const { author1, req, res, next } = this;
+
+      res.author = author1;
+      authorController
+        .getAuthorBooks(req, res, next)
+        .then(() => {
+          const { authorBooks } = res;
+          expect(authorBooks).to.be.a('array');
+
+          const getAuthorId = obj => obj.author.toString();
+          const authors = authorBooks.map(getAuthorId);
+          authors.forEach(obj => expect(obj).to.equal(res.author.id));
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should authorBooks be an empty array when author has no books', (done) => {
+      const { author2, req, res, next } = this;
+
+      res.author = author2;
+      authorController
+        .getAuthorBooks(req, res, next)
+        .then(() => {
+          const { authorBooks } = res;
+          expect(authorBooks).to.be.a('array');
+          expect(authorBooks).to.be.empty;
+          done();
+        })
         .catch(done);
     });
   });
