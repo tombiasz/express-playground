@@ -26,15 +26,15 @@ describe('Author controller', () => {
           family_name: 'Doe',
         });
 
-        Promise
+        return Promise
           .all([
             this.author1.save(),
             this.author2.save(),
-          ])
-          .then((results) => {
-            this.authors = results;
-            done();
-          });
+          ]);
+      })
+      .then((results) => {
+        this.authors = results;
+        done();
       });
   });
 
