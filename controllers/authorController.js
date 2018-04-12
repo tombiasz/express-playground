@@ -38,7 +38,7 @@ exports.getAuthorBooks = (req, res, next) => {
   const { author } = res;
 
   return Book
-    .find({ author: author.id }, 'title summary')
+    .find({ author: author.id })
     .exec()
     .then((authorBooks) => {
       res.authorBooks = authorBooks;
