@@ -36,7 +36,8 @@ exports.getAllAuthors = (req, res, next) => {
 
 exports.getAuthorBooks = (req, res, next) => {
   const { author } = res;
-  Book
+
+  return Book
     .find({ author: author.id }, 'title summary')
     .exec()
     .then((authorBooks) => {
