@@ -1,6 +1,7 @@
 const chai = require('chai');
 const httpMocks = require('node-mocks-http');
 const mocha = require('mocha');
+const moment = require('moment');
 const sinon = require('sinon');
 const { validationResult } = require('express-validator/check');
 
@@ -214,7 +215,7 @@ describe('Author controller', () => {
 
       res.author = author1;
       authorController
-        .getAuthorBooks(req, res, next )
+        .getAuthorBooks(req, res, next)
         .then(() => {
           const { authorBooks } = res;
           expect(authorBooks).to.be.a('array');
@@ -674,5 +675,76 @@ describe('Author controller', () => {
         })
         .catch(done);
     });
+  });
+
+  describe('processAuthorUpdateForm', () => {
+    it('should render author_form view when there are form errors', (done) => {
+      const { author1, req, res, next } = this;
+
+      req._validationErrors = [1, 2, 3]; // fake express-validator errors
+      res.author = author1;
+      authorController.processAuthorUpdateForm(req, res, next);
+      expect(res._getRenderView()).to.be.equal('author_form');
+      done();
+    });
+
+    it('should pass form data back to the view as author object when there are form errors', (done) => {
+      const { author1, req, res, next } = this;
+      const formData = {
+        first_name: 'jim',
+        family_name: 'jones',
+        date_of_birth: moment().add(-7, 'days'),
+        date_of_death: moment().add(7, 'days'),
+      };
+
+      req._validationErrors = [1, 2, 3]; // fake express-validator errors
+      req.body = formData;
+      res.author = author1;
+      authorController.processAuthorUpdateForm(req, res, next);
+
+      const renderData = res._getRenderData();
+
+      expect(renderData).to.have.property('author');
+
+      const updatedAuthor = renderData.author;
+
+      expect(updatedAuthor.first_name).to.be.equal(formData.first_name);
+      expect(updatedAuthor.family_name).to.be.equal(formData.family_name);
+      expect(updatedAuthor.date_of_birth.toISOString()).to.be.equal(formData.date_of_birth.toISOString());
+      expect(updatedAuthor.date_of_death.toISOString()).to.be.equal(formData.date_of_death.toISOString());
+      done();
+    });
+
+    it('should pass array with errors to the view when there are form errors', (done) => {
+      const { author1, req, res, next } = this;
+
+      req._validationErrors = [1, 2, 3]; // fake express-validator errors
+      res.author = author1;
+      authorController.processAuthorUpdateForm(req, res, next);
+
+      const renderData = res._getRenderData();
+
+      expect(renderData).to.have.property('errors');
+      expect(renderData.errors).to.be.a('array');
+      expect(renderData.errors).to.deep.equal(req._validationErrors);
+      done();
+    });
+
+    it('should pass title to the view when there are form errors', (done) => {
+      const { author1, req, res, next } = this;
+
+      req._validationErrors = [1, 2, 3]; // fake express-validator errors
+      res.author = author1;
+      authorController.processAuthorUpdateForm(req, res, next);
+
+      const renderData = res._getRenderData();
+
+      expect(renderData).to.have.property('title');
+      expect(renderData.title).to.be.equal('Update Author');
+      done();
+    });
+
+    it('should update author when form is valid');
+    it('should redirect to author detail after author update');
   });
 });
