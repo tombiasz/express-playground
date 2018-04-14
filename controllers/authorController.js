@@ -125,7 +125,7 @@ exports.processAuthorUpdateForm = (req, res, next) => {
 
   if (!errors.isEmpty()) {
     res.render('author_form', {
-      title: 'Create Author',
+      title: 'Update Author',
       author: updatedAuthor,
       errors: errors.array(),
     });
